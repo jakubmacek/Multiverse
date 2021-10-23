@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.115" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Multiverse.Persistence.NHibernate\Multiverse.Persistence.NHibernate.csproj" />
+    <ProjectReference Include="..\Multiverse.SimpleUniverse\Multiverse.SimpleUniverse.csproj" />
+    <ProjectReference Include="..\Multiverse\Multiverse.csproj" />
+  </ItemGroup>
+
+</Project>
