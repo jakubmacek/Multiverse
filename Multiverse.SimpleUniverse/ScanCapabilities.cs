@@ -12,6 +12,6 @@ namespace Multiverse.SimpleUniverse
 
         public static readonly IScanCapability Nothing = new ScanNothingCapability();
 
-        public static readonly IScanCapability SeeGaiaAndOwn = new SeeGaiaAndOwnScanCapability();
+        public static readonly IScanCapability SeeGaiaAndOwn1 = new SeeGaiaAndOwnScanCapability(1);
     }
 }

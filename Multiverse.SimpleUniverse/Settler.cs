@@ -18,7 +18,7 @@ namespace Multiverse.SimpleUniverse
 
         public override int MaxMovement => 1;
 
-        public override IScanCapability ScanCapability => ScanCapabilities.SeeGaiaAndOwn;
+        public override IScanCapability ScanCapability => ScanCapabilities.SeeGaiaAndOwn1;
 
         public override IEnumerable<UnitAbility> CreateAbilities()
         {
