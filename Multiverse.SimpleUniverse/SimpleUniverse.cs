@@ -15,6 +15,8 @@ namespace Multiverse.SimpleUniverse
         {
             ScriptingEngineFactory.AddLibrary(new Scripting.Constants(this));
             ScriptingEngineFactory.AddLibrary(new Scripting.Debugging(this));
+            ScriptingEngineFactory.AddLibrary(new Scripting.Scanning(this));
+            ScriptingEngineFactory.AddLibrary(new Scripting.Abilities(this));
         }
 
         protected override void EnumerateUnits(IUnitTypeVisitor v)

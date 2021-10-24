@@ -22,6 +22,7 @@ namespace Multiverse.SimpleUniverse
 
         public override IEnumerable<UnitAbility> CreateAbilities()
         {
+            yield return new MoveOnLand();
             yield return new SettlerHarvestWood();
         }
 

@@ -25,6 +25,8 @@ namespace Multiverse
 
         UnitAbilityUseResult UseAbility<T>(Unit unit, UnitAbilityUse use) where T : class, IUnitAbility;
 
+        UnitAbilityUseResult UseAbility(Unit unit, string abilityName, UnitAbilityUse use);
+
         ScanAroundResult ScanAroundUnit(Guid id);
 
         ScanAroundResult ScanAround(Unit unit);

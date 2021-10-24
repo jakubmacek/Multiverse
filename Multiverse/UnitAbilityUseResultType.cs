@@ -16,5 +16,7 @@ namespace Multiverse
         TargetUnitIsTooFar = 5,
         TargetPlaceIsTooFar = 6,
         NothingToDo = 7,
+        NotEnoughMovement = 8,
+        NotEnoughResources = 9,
     }
 }

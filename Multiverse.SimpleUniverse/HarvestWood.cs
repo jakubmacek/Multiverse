@@ -8,7 +8,7 @@ namespace Multiverse.SimpleUniverse
 {
     public abstract class HarvestWood : UnitAbility
     {
-        public override string Name => "Harvest wood";
+        public override string Name => "HarvestWood";
 
         public abstract int HarvestedOnUse { get; }
 

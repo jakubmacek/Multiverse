@@ -13,5 +13,10 @@ namespace Multiverse
             foreach (var ability in abilities)
                 Add(new ScriptingUnitAbility(ability));
         }
+
+        public List<ScriptingUnitAbility> withType(int type)
+        {
+            return this.Where(x => (x.type & type) != 0).ToList();
+        }
     }
 }

@@ -19,13 +19,15 @@ namespace Multiverse.Scripting
         {
             engine.RegisterObject("scanning", new Implementation
             {
-                scanAround = ScanAround
+                scanAround = ScanAround,
+                //filterByType = FilterByType,
             });
         }
 
         class Implementation
         {
             public Func<ScriptingUnitSelf, List<ScriptingUnit>>? scanAround;
+            //public Func<string, List<ScriptingUnit>, List<ScriptingUnit>>? filterByType;
         }
 
         public List<ScriptingUnit> ScanAround(ScriptingUnitSelf self)

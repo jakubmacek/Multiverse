@@ -3,13 +3,15 @@ using System.Collections.Generic;
 
 namespace Multiverse
 {
-    public class Message
+    public class Message : IMessage
     {
         public virtual Guid Id { get; set; }
 
         public virtual World? World { get; set; }
 
         public virtual Player? Player { get; set; }
+
+        public virtual MessageType Type { get; set; }
 
         public virtual DateTime SentAt { get; set; }
 

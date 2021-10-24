@@ -24,7 +24,7 @@ namespace Multiverse.Scripting
                 engine.RegisterObject(unitType.ConstantName, unitType.ConstantName);
 
             foreach (var abilityType in Enum.GetValues(typeof(UnitAbilityType)))
-                engine.RegisterObject("AbilityType" + Enum.GetName(typeof(UnitAbilityType), abilityType), abilityType);
+                engine.RegisterObject("AbilityType" + Enum.GetName(typeof(UnitAbilityType), abilityType), (int)abilityType);
         }
     }
 }

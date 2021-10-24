@@ -79,6 +79,7 @@ namespace Multiverse
             unit.Id = Guid.NewGuid();
             unit.Name = unit.GetType().Name + " " + unit.Id;
             unit.Player = player;
+            unit.World = World;
             unit.Place = place;
             unit.PlayerData = new PlayerData();
             unit.Health = unit.MaxHealth;
@@ -100,12 +101,22 @@ namespace Multiverse
             return UseAbility(unit, ability, use);
         }
 
+        public UnitAbilityUseResult UseAbility(Unit unit, string abilityName, UnitAbilityUse use)
+        {
+            var ability = unit.Abilities.Where(x => x.Name == abilityName).FirstOrDefault();
+            if (ability == null)
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.NoSuchAbility);
+
+            return UseAbility(unit, ability, use);
+        }
+
         protected UnitAbilityUseResult UseAbility(Unit unit, IUnitAbility ability, UnitAbilityUse use)
         {
             if (ability.RemainingUses <= 0)
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.NoRemainingUses);
 
-            ability.RemainingUses--;
+            if (ability.CooldownTime != 0)
+                ability.RemainingUses--;
             var result = ability.Use(this, unit, use);
             Repository.Save(unit);
             return result;
@@ -116,7 +127,10 @@ namespace Multiverse
             if (unit.Immovable)
                 return new MoveUnitResult() { Type = MoveUnitResultType.Immovable };
 
-            //TODO Implementovat pohyb. Kontrolu sousedstvi places, kontrolu dostatku pohybovych bodu. Odebirani pohybovych bodu.
+            if (unit.Movement < movementRequired)
+                return new MoveUnitResult() { Type = MoveUnitResultType.NotEnoughMovement };
+
+            unit.Movement -= movementRequired;
             unit.Place = place;
             Repository.Save(unit);
             return new MoveUnitResult() { Type = MoveUnitResultType.Moved };
@@ -156,7 +170,7 @@ namespace Multiverse
                 {
                     if (ability.RemainingUses < ability.MaxAvailableUses)
                     {
-                        if (ability.CooldownTimestamp >= worldTimestamp)
+                        if (ability.CooldownTime != 0 && ability.CooldownTimestamp >= worldTimestamp)
                         {
                             ability.RemainingUses = Math.Min(ability.MaxAvailableUses, ability.RemainingUses + ability.UsesRestoredOnCooldown);
                             ability.CooldownTimestamp = worldTimestamp + ability.CooldownTime;
@@ -174,13 +188,29 @@ namespace Multiverse
         {
             foreach (var unit in units)
             {
-                if (unit.Script == null)
+                var script = unit.Script;
+                if (script == null)
                     continue;
 
-                using (var scriptingEngine = ScriptingEngineFactory.Create(unit.Script))
+                using (var scriptingEngine = ScriptingEngineFactory.Create(script))
                 {
-                    scriptingEngine.RunEvent(@event, unit);
-                    //TODO Nekam uzivateli ukladat chybove hlasky.
+                    var result = scriptingEngine.RunEvent(@event, unit);
+
+                    if (result.Type != ScriptingRunEventResultType.Success)
+                    {
+                        var message = new Message()
+                        {
+                            Id = Guid.NewGuid(),
+                            World = World,
+                            Player = script.Player,
+                            Type = MessageType.Error,
+                            SentAt = DateTime.Now,
+                            SentAtTimestamp = World.Timestamp,
+                            FromUnit = unit.Id,
+                            Text = result.Type.ToString() + ": " + result.Message,
+                        };
+                        Repository.Save(message);
+                    }
                 }
 
                 Repository.Save(unit);
@@ -194,7 +224,7 @@ namespace Multiverse
 
             for (int offset = 0; offset < allIds.Count; offset += batchSize)
             {
-                var ids = allIds.GetRange(offset, batchSize);
+                var ids = allIds.GetRange(offset, Math.Min(batchSize, allIds.Count - offset));
                 var units = Repository.Units.Where(x => ids.Contains(x.Id)).ToList();
                 RunEventScript(units, @event);
             }

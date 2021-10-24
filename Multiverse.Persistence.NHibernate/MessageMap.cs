@@ -9,6 +9,7 @@ namespace Multiverse.Persistence.NHibernate
             Id(x => x.Id, i => { i.Column("id"); });
             ManyToOne(x => x.World, m => { m.NotNullable(true); m.Column("world"); });
             ManyToOne(x => x.Player, m => { m.NotNullable(true); m.Column("player"); });
+            Property(x => x.Type, p => { p.NotNullable(true); });
             Property(x => x.SentAt, p => { p.NotNullable(true); });
             Property(x => x.SentAtTimestamp, p => { p.NotNullable(true); });
             Property(x => x.ReceivedAtTimestamp, p => { p.NotNullable(false); });

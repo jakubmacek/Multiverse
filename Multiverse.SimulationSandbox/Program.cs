@@ -21,7 +21,7 @@ namespace Multiverse.SimulationSandbox
             System.IO.File.Copy(templateFilePath, filePath);
 
             //CreateEmptyUniverse(templateFilePath);
-            RunUniverse(filePath, 3, CreateInitialState);
+            RunUniverse(filePath, 7, CreateInitialState);
         }
 
         private static void CreateInitialState(IUniverse universe)
@@ -48,7 +48,6 @@ namespace Multiverse.SimulationSandbox
 
             var settler1 = universe.SpawnUnit<Settler>(player1, place_0_0);
             settler1.Script = settlerScript;
-            settler1.SetResourceAmount(R.Wood, 123);
             repository.Save(settler1);
         }
 
@@ -59,16 +58,21 @@ namespace Multiverse.SimulationSandbox
                 using (var universe = new SimpleUniverseFactory().Create(repositoryFactoryFactory, 1))
                 {
                     universe.EnsureInitialWorldState();
+
+                    initialState(universe);
+
                     var repository = universe.Repository;
                     var world = universe.World;
 
+                    DumpWorld(universe, repository, world);
+
                     while (howManyTicks-- > 0)
                     {
-                        DumpWorld(universe, repository, world);
-                        //System.Threading.Thread.Sleep(5000);
-                        universe.Tick(); //ziskam pouziti schopnosti
                         Console.ReadKey();
                         Console.Clear();
+                        universe.Tick(); //ziskam pouziti schopnosti
+                        DumpWorld(universe, repository, world);
+                        //System.Threading.Thread.Sleep(5000);
                     }
                 }
             }
@@ -150,6 +154,17 @@ namespace Multiverse.SimulationSandbox
                     Console.WriteLine($"\tplayer data '{unitGroup.PlayerData.Value}'");
                 foreach (var unit in unitGroup.Units)
                     Console.WriteLine($"\t{unit.Name} ({unit.GetType().Name} of player {unit.Player?.Name}) at {unit.Place.X}, {unit.Place.Y}");
+            }
+
+            foreach (var message in repository.Messages)
+            {
+                var fromUnit = message.FromUnit == null ? null : repository.GetUnit(message.FromUnit.Value);
+                var fromUnitName = fromUnit != null ? fromUnit.Name : (message.FromUnit == null ? "-" : message.FromUnit.Value.ToString());
+                var toUnit = message.ToUnit == null ? null : repository.GetUnit(message.ToUnit.Value);
+                var toUnitName = toUnit != null ? toUnit.Name : (message.ToUnit == null ? "-" : message.ToUnit.Value.ToString());
+                Console.WriteLine();
+                Console.WriteLine($"{message.Type} message from '{fromUnitName}' to '{toUnitName}' sent at {message.SentAtTimestamp}, received at {message.ReceivedAtTimestamp}");
+                Console.WriteLine($"\tText '{message.Text}', data {message.PlayerData.Value}");
             }
         }
     }
