@@ -63,11 +63,6 @@ namespace Multiverse
 
         protected abstract void EnumerateUnits(IUnitTypeVisitor v);
 
-        public virtual Place GetPlace(int x, int y)
-        {
-            return new Place(World, x, y);
-        }
-
         public virtual T SpawnUnit<T>(Player player, Place place) where T : Unit
         {
             var unit = CreateUnit<T>(player, place);

@@ -25,9 +25,9 @@ namespace Multiverse.Persistence.NHibernate
 
             ManyToOne(x => x.Player, m => { m.NotNullable(true); m.Column("player"); });
             Property(x => x.Name, p => { p.NotNullable(true); p.Length(200); });
+            ManyToOne(x => x.World, p => { p.NotNullable(true); p.Column("world"); });
             Component(x => x.Place, y =>
             {
-                y.ManyToOne(y => y.World, p => { p.NotNullable(true); p.Column("world"); });
                 y.Property(y => y.X, p => { p.NotNullable(true); p.Column("x"); });
                 y.Property(y => y.Y, p => { p.NotNullable(true); p.Column("y"); });
             });

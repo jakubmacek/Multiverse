@@ -18,7 +18,7 @@ namespace Multiverse.Persistence.NHibernate
 
         public IQueryable<Script> Scripts => session.Query<Script>();
 
-        public IQueryable<Unit> Units => session.Query<Unit>().Where(x => x.Place.World == world);
+        public IQueryable<Unit> Units => session.Query<Unit>().Where(x => x.World == world);
 
         public IQueryable<UnitGroup> UnitGroups => session.Query<UnitGroup>().Where(x => x.World == world);
 

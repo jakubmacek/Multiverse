@@ -11,6 +11,8 @@ namespace Multiverse
 
         Player? Player { get; set; }
 
+        World? World { get; set; }
+
         Place Place { get; set; }
 
         bool Indestructible { get; }

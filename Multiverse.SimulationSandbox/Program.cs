@@ -66,10 +66,10 @@ namespace Multiverse.SimulationSandbox
                         Source = System.IO.File.ReadAllText("../../../SettlerScript.lua"),
                     };
                     repository.Save(settlerScript);
-                    var place_0_0 = universe.GetPlace(0, 0);
-                    var place_0_1 = universe.GetPlace(0, 1);
+                    var place_0_0 = new Place(0, 0);
+                    var place_1_0 = new Place(1, 0);
 
-                    var forest1 = universe.SpawnUnit<Forest>(gaia, place_0_1);
+                    var forest1 = universe.SpawnUnit<Forest>(gaia, place_1_0);
                     forest1.SetResourceAmount(R.Wood, 5000);
 
                     var settler1 = universe.SpawnUnit<Settler>(player1, place_0_0);

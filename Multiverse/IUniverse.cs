@@ -30,7 +30,5 @@ namespace Multiverse
         ScanAroundResult ScanAround(Unit unit);
 
         void EnsureInitialWorldState();
-
-        Place GetPlace(int x, int y);
     }
 }

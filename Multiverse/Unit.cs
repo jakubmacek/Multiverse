@@ -11,6 +11,8 @@ namespace Multiverse
         public virtual Guid Id { get; set; }
 
         public virtual Player? Player { get; set; }
+        
+        public virtual World? World { get; set; }
 
         public virtual Place Place { get; set; }
 
