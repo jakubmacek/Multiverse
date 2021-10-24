@@ -22,12 +22,12 @@ namespace Multiverse
 
         public IEnumerable<ResourceAmount> RequiredResourcesTotal => RequiredResourcesPerTick.Select(x => new ResourceAmount(x.ResourceId, x.Amount * TicksToBuild));
 
-        public override ResourceCapacity GetResourceCapacity(Resource resource)
+        public override int GetResourceCapacity(int resourceId)
         {
             foreach (var resourceAmount in RequiredResourcesTotal)
-                if (resourceAmount.ResourceId == resource.Id)
-                    return new ResourceCapacity(resource, resourceAmount.Amount);
-            return new ResourceCapacity(resource, 0);
+                if (resourceAmount.ResourceId == resourceId)
+                    return resourceAmount.Amount;
+            return 0;
         }
     }
 }

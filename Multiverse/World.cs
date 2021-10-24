@@ -10,7 +10,7 @@ namespace Multiverse
     {
         public virtual int Id { get; set; }
 
-        public virtual string Universe { get; set; }
+        public virtual string Universe { get; set; } = string.Empty;
 
         public virtual ulong Timestamp { get; set; }
     }

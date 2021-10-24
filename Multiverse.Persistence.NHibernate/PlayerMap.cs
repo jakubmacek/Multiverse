@@ -2,7 +2,7 @@
 
 namespace Multiverse.Persistence.NHibernate
 {
-    class PlayerMap : ClassMapping<IPlayer>
+    class PlayerMap : ClassMapping<Player>
     {
         public PlayerMap()
         {

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Multiverse.SimpleUniverse
+namespace Multiverse
 {
-    public sealed class ResourceIds : Multiverse.ResourceIds
+    public static class HexGrid
     {
-        public const int Wood = 1;
+        //public static 
     }
 }

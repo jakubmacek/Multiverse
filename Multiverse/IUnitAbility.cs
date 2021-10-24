@@ -2,6 +2,8 @@
 {
     public interface IUnitAbility
     {
+        string Name { get; }
+
         ulong CooldownTime { get; }
 
         ulong CooldownTimestamp { get; set; }
@@ -14,6 +16,6 @@
 
         int UsesRestoredOnCooldown { get; }
 
-        UnitAbilityUseResult Use(IUniverse universe, IUnit unit, UnitAbilityUse use);
+        UnitAbilityUseResult Use(Universe universe, Unit unit, UnitAbilityUse use);
     }
 }

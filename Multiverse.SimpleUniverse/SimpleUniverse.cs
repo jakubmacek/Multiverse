@@ -8,18 +8,31 @@ namespace Multiverse.SimpleUniverse
 {
     public sealed class SimpleUniverse : Universe
     {
-        public SimpleUniverse(UniversePersistence persistence)
-            : base(persistence, CreateResources())
+        public static readonly Guid GaiaPlayerId = Guid.Empty;
+
+        public SimpleUniverse(IRepositoryFactoryFactory repositoryFactoryFactory, int worldId)
+            : base(repositoryFactoryFactory, worldId, R.All)
         {
+            ScriptingEngineFactory.AddLibrary(new Scripting.Constants(this));
+            ScriptingEngineFactory.AddLibrary(new Scripting.Debugging(this));
         }
 
-        private static IEnumerable<Resource> CreateResources()
+        protected override void EnumerateUnits(IUnitTypeVisitor v)
         {
-            yield return new Resource(ResourceIds.BuildingWork);
-            yield return new Resource(ResourceIds.Wood);
+            v.Visit<Forest>();
+            v.Visit<Settler>();
         }
 
-        public override IUnit CreateUnit<T>(IPlayer player, Place place)
+        public override void EnsureInitialWorldState()
+        {
+            base.EnsureInitialWorldState();
+
+            var gaia = new Player() { Id = GaiaPlayerId, Name = "Gaia" };
+            if (Repository.GetPlayer(gaia.Id) == null)
+                Repository.Save(gaia);
+        }
+
+        public override Unit CreateUnit<T>(Player player, Place place)
         {
             var typeOfT = typeof(T);
             if (typeOfT == typeof(Settler))

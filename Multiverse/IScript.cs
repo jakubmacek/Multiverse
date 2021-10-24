@@ -6,11 +6,11 @@ namespace Multiverse
     {
         Guid Id { get; set; }
 
-        string Name { get; set; }
+        string? Name { get; set; }
 
-        IPlayer Player { get; set; }
+        Player? Player { get; set; }
 
-        string Source { get; set; }
+        string? Source { get; set; }
 
         ScriptEngineType Type { get; set; }
     }

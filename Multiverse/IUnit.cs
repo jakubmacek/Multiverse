@@ -9,7 +9,7 @@ namespace Multiverse
 
         string Name { get; set; }
 
-        IPlayer Player { get; set; }
+        Player? Player { get; set; }
 
         Place Place { get; set; }
 
@@ -25,23 +25,27 @@ namespace Multiverse
 
         int MaxMovement { get; }
 
-        IScript Script { get; set; }
+        Script? Script { get; set; }
 
         PlayerData PlayerData { get; set; }
 
-        Dictionary<int, int> Resources { get; set; }
+        IScanCapability ScanCapability { get; }
 
-        ICollection<IUnitAbility> Abilities { get; set; }
+        Dictionary<int, int> Resources { get; }
+
+        ICollection<IUnitAbility> Abilities { get; }
 
         TransferResourceResult AddResource(Resource resource, int amount);
 
         IEnumerable<IUnitAbility> CreateAbilities();
 
-        UnitResource GetRemainingCapacity(Resource resource);
+        //UnitResource GetRemainingCapacity(Resource resource);
 
         UnitResource GetResourceAmount(Resource resource);
 
-        ResourceCapacity GetResourceCapacity(Resource resource);
+        //ResourceCapacity GetResourceCapacity(Resource resource);
+
+        int GetResourceCapacity(int resourceId);
 
         TransferResourceResult RemoveResource(Resource resource, int amount);
 

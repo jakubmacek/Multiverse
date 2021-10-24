@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
-    public class ResourceIds
+    public interface IScriptingLibrary
     {
-        public const int BuildingWork = -1;
+        public void Register(IScriptingEngine engine);
     }
 }

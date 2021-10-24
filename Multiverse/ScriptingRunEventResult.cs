@@ -10,9 +10,12 @@ namespace Multiverse
     {
         public readonly ScriptingRunEventResultType Type;
 
-        public ScriptingRunEventResult(ScriptingRunEventResultType type)
+        public readonly string? Message;
+
+        public ScriptingRunEventResult(ScriptingRunEventResultType type, string? message)
         {
             Type = type;
+            Message = message;
         }
     }
 }

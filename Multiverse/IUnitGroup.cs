@@ -7,14 +7,14 @@ namespace Multiverse
     {
         Guid Id { get; set; }
 
-        string Name { get; set; }
+        string? Name { get; set; }
 
-        IPlayer Player { get; set; }
+        Player? Player { get; set; }
 
         PlayerData PlayerData { get; set; }
 
-        ISet<IUnit> Units { get; set; }
+        ISet<Unit> Units { get; set; }
 
-        IWorld World { get; set; }
+        World? World { get; set; }
     }
 }

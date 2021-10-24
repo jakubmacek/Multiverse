@@ -8,6 +8,6 @@ namespace Multiverse
 {
     public struct PlayerData
     {
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 }

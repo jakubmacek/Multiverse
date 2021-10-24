@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Multiverse.Scripting\Multiverse.Scripting.csproj" />
     <ProjectReference Include="..\Multiverse\Multiverse.csproj" />
   </ItemGroup>
 

@@ -10,12 +10,18 @@ namespace Multiverse
     {
         public readonly int Id;
 
-        public Resource(int id)
+        public readonly string ConstantName;
+
+        public readonly string Name;
+
+        public Resource(int id, string constantName, string name)
         {
             Id = id;
+            ConstantName = constantName;
+            Name = name;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is Resource resource && Equals(resource);
         }

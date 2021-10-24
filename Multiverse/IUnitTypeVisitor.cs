@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
-    public interface UniverseFactory
+    public interface IUnitTypeVisitor
     {
-        public Universe Create(UniversePersistence persistence);
+        public void Visit<T>() where T : Unit;
     }
 }

@@ -15,24 +15,24 @@
             get { return typeof (T); }
         }
 
-        public object Assemble(object cached, object owner)
+        public object? Assemble(object? cached, object? owner)
         {
             return cached;
         }
 
-        public object DeepCopy(object value)
+        public object? DeepCopy(object? value)
         {
             if (!(value is T source))
                 return null;
             return Deserialise(Serialise(source));
         }
 
-        public object Disassemble(object value)
+        public object? Disassemble(object? value)
         {
             return value;
         }
 
-        public new bool Equals(object x, object y)
+        public new bool Equals(object? x, object? y)
         {
             var left = x as T;
             var right = y as T;
@@ -46,8 +46,10 @@
             return Serialise(left).Equals(Serialise(right));
         }
 
-        public int GetHashCode(object x)
+        public int GetHashCode(object? x)
         {
+            if (x == null)
+                return 0;
             return x.GetHashCode();
         }
 
@@ -56,7 +58,7 @@
             get { return false; }
         }
 
-        public object Replace(object original, object target, object owner)
+        public object? Replace(object? original, object? target, object? owner)
         {
             return original;
         }
@@ -70,7 +72,7 @@
             }
         }
 
-        public T Deserialise(string jsonString)
+        public T? Deserialise(string? jsonString)
         {
             if (string.IsNullOrWhiteSpace(jsonString))
                 return CreateObject(typeof (T));
@@ -78,7 +80,7 @@
             return JsonColumnTypeWorker.Deserialize<T>(jsonString);
         }
 
-        public string Serialise(T obj)
+        public string Serialise(T? obj)
         {
             if (obj == null)
                 return "{}";
@@ -86,9 +88,9 @@
             return serialised;
         }
 
-        private static T CreateObject(Type jsonType)
+        private static T? CreateObject(Type jsonType)
         {
-            object result;
+            object? result;
             try
             {
                 result = Activator.CreateInstance(jsonType, true);
@@ -98,17 +100,17 @@
                 result = FormatterServices.GetUninitializedObject(jsonType);
             }
 
-            return (T) result;
+            return (T?) result;
         }
 
-        public object NullSafeGet(DbDataReader rs, string[] names, ISessionImplementor session, object owner)
+        public object? NullSafeGet(DbDataReader rs, string[] names, ISessionImplementor session, object owner)
         {
             var returnValue = NHibernateUtil.String.NullSafeGet(rs, names[0], session, owner);
             var json = returnValue == null ? "{}" : returnValue.ToString();
             return Deserialise(json);
         }
 
-        public void NullSafeSet(DbCommand cmd, object value, int index, ISessionImplementor session)
+        public void NullSafeSet(DbCommand cmd, object? value, int index, ISessionImplementor session)
         {
             var column = value as T;
             if (value == null)

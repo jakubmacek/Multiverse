@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Multiverse.SimpleUniverse
 {
-    public interface WoodSource
+    public interface WoodSource : IUnit
     {
-        public TransferResourceResult RemoveResource(Resource resource, int amount);
     }
 }

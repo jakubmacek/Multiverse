@@ -8,11 +8,11 @@ namespace Multiverse
 {
     public struct UnitAbilityUse
     {
-        public readonly Unit TargetUnit;
+        public readonly Unit? TargetUnit;
 
         public readonly Place TargetPlace;
 
-        public UnitAbilityUse(Unit targetUnit, Place targetPlace)
+        public UnitAbilityUse(Unit? targetUnit, Place targetPlace)
         {
             TargetUnit = targetUnit;
             TargetPlace = targetPlace;

@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Multiverse.Scripting
 {
-    public class Pathfinding : ScriptingLibrary
+    public class Pathfinding : IScriptingLibrary
     {
-        // TODO Knihovna funkci pro integraci do skriptovani.
+        public void Register(IScriptingEngine engine)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

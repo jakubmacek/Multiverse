@@ -10,6 +10,7 @@ namespace Multiverse
     {
         Success = 0,
         ScriptError = 1,
-        EngineError = 2,
+        EventError = 2,
+        MissingOnEventHandler = 3,
     }
 }

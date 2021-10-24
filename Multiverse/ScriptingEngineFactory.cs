@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Multiverse
 {
     public class ScriptingEngineFactory
     {
-        public ScriptingEngine Create(IScript script)
+        private List<IScriptingLibrary> libraries = new List<IScriptingLibrary>();
+
+        public IScriptingEngine Create(IScript script)
         {
             if (script.Type == ScriptEngineType.Lua)
-                return new LuaScriptingEngine(script);
+                return new LuaScriptingEngine(script, libraries);
             else
                 throw new ArgumentException($"Unknown scripting engine {script.Type} in script '{script.Id}'.", nameof(script));
+        }
+
+        public void AddLibrary(IScriptingLibrary library)
+        {
+            libraries.Add(library);
         }
     }
 }

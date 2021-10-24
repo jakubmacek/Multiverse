@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace Multiverse.SimpleUniverse
 {
-    public class SimpleUniverseFactory : UniverseFactory
+    public class SimpleUniverseFactory : IUniverseFactory
     {
-        public Universe Create(UniversePersistence persistence)
+        public IUniverse Create(IRepositoryFactoryFactory repositoryFactoryFactory, int worldId)
         {
-            var world = persistence.World;
-            if (world.Universe != nameof(SimpleUniverse))
-                throw new ArgumentException($"This world is in '{world.Universe}' universe.", nameof(persistence));
-            return new SimpleUniverse(persistence);
+            return new SimpleUniverse(repositoryFactoryFactory, worldId);
         }
     }
 }

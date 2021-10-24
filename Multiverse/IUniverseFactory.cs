@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
-    public interface ScriptingLibrary
+    public interface IUniverseFactory
     {
-        //TODO GetFunctions
+        public IUniverse Create(IRepositoryFactoryFactory repositoryFactoryFactory, int worldId);
     }
 }

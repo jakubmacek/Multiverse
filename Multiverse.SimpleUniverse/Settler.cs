@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Multiverse.SimpleUniverse
 {
+    [DisplayName("Worker")]
     public class Settler : Unit
     {
         public override bool Indestructible => false;
@@ -16,16 +18,18 @@ namespace Multiverse.SimpleUniverse
 
         public override int MaxMovement => 1;
 
+        public override IScanCapability ScanCapability => ScanCapabilities.SeeGaiaAndOwn;
+
         public override IEnumerable<UnitAbility> CreateAbilities()
         {
             yield return new SettlerHarvestWood();
         }
 
-        public override ResourceCapacity GetResourceCapacity(Multiverse.Resource resource)
+        public override int GetResourceCapacity(int resourceId)
         {
-            if (resource.Id == ResourceIds.Wood)
-                return new ResourceCapacity(resource, 35);
-            return new ResourceCapacity(resource, 0);
+            if (resourceId == R.Wood.Id)
+                return 35;
+            return 0;
         }
     }
 }

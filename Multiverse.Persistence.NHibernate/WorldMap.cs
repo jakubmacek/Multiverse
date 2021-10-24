@@ -2,7 +2,7 @@
 
 namespace Multiverse.Persistence.NHibernate
 {
-    class WorldMap : ClassMapping<IWorld>
+    class WorldMap : ClassMapping<World>
     {
         public WorldMap()
         {

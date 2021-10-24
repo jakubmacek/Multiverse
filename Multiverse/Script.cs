@@ -10,12 +10,12 @@ namespace Multiverse
     {
         public virtual Guid Id { get; set; }
 
-        public virtual IPlayer Player { get; set; }
+        public virtual Player? Player { get; set; }
 
-        public virtual string Name { get; set; }
+        public virtual string? Name { get; set; }
 
         public virtual ScriptEngineType Type { get; set; }
 
-        public virtual string Source { get; set; }
+        public virtual string? Source { get; set; }
     }
 }

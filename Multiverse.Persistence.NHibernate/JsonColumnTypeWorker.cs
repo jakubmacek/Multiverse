@@ -34,12 +34,12 @@
             return JsonConvert.SerializeObject(obj, Formatting.None, Settings);
         }
 
-        public static T Deserialize<T>(string json)
+        public static T? Deserialize<T>(string json)
         {
             return JsonConvert.DeserializeObject<T>(json, Settings);
         }
 
-        public static void PopulateObject<T>(string json, T obj)
+        public static void PopulateObject<T>(string json, T? obj)
         {
             JsonConvert.PopulateObject(json, obj, Settings);
         }

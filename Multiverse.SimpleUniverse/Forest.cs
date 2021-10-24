@@ -16,17 +16,19 @@ namespace Multiverse.SimpleUniverse
 
         public override int MaxMovement => 0;
 
+        public override IScanCapability ScanCapability => ScanCapabilities.Nothing;
+
         public override IEnumerable<UnitAbility> CreateAbilities()
         {
             return new UnitAbility[0];
         }
 
-        public override ResourceCapacity GetResourceCapacity(Multiverse.Resource resource)
+        public override int GetResourceCapacity(int resourceId)
         {
-            if (resource.Id == ResourceIds.Wood)
-                return new ResourceCapacity(resource, 999999);
+            if (resourceId == R.Wood.Id)
+                return 999999;
             else
-                return new ResourceCapacity(resource, 0);
+                return 0;
         }
     }
 }

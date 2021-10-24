@@ -2,13 +2,13 @@
 
 namespace Multiverse.Persistence.NHibernate
 {
-    class UnitGroupMap : ClassMapping<IUnitGroup>
+    class UnitGroupMap : ClassMapping<UnitGroup>
     {
         public UnitGroupMap()
         {
             Id(x => x.Id, i => { i.Column("id"); });
-            ManyToOne(x => x.World, m => { m.NotNullable(true); });
-            ManyToOne(x => x.Player, m => { m.NotNullable(true); });
+            ManyToOne(x => x.World, m => { m.NotNullable(true); m.Column("world"); });
+            ManyToOne(x => x.Player, m => { m.NotNullable(true); m.Column("player"); });
             Property(x => x.Name, p => { p.NotNullable(true); p.Length(200); });
             Component(x => x.PlayerData, y =>
             {
@@ -16,7 +16,8 @@ namespace Multiverse.Persistence.NHibernate
             });
             Set(x => x.Units, m =>
             {
-                //m.Key(k => k.Column(col => col.Name("EngineId")));
+                m.Table("unitgroupunits");
+                m.Key(k => k.Column(col => col.Name("unitgroup")));
                 //m.Cascade(Cascade.All | Cascade.DeleteOrphans); //optional
             }, a => a.ManyToMany());
         }

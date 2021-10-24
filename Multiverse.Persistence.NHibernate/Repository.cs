@@ -4,74 +4,69 @@ using System.Linq;
 
 namespace Multiverse.Persistence.NHibernate
 {
-    public class Repository : UniversePersistence, IDisposable
+    public class Repository : IRepository, IDisposable
     {
         private bool hasBeenDisposed;
 
         private readonly ISession session;
 
-        private readonly IWorld world;
+        private readonly World world;
 
-        public IWorld World => world;
+        public World World => world;
 
-        public IQueryable<IPlayer> Players => session.Query<IPlayer>();
+        public IQueryable<Player> Players => session.Query<Player>();
 
-        public IQueryable<IScript> Scripts => session.Query<IScript>();
+        public IQueryable<Script> Scripts => session.Query<Script>();
 
-        public IQueryable<IUnit> Units => session.Query<IUnit>().Where(x => x.Place.World == world);
+        public IQueryable<Unit> Units => session.Query<Unit>().Where(x => x.Place.World == world);
 
-        public IQueryable<IUnitGroup> UnitGroups => session.Query<IUnitGroup>().Where(x => x.World == world);
+        public IQueryable<UnitGroup> UnitGroups => session.Query<UnitGroup>().Where(x => x.World == world);
 
-        public Repository(ISession session, IWorld world)
+        internal Repository(ISession session, World world)
         {
             this.session = session;
             this.world = world;
         }
 
-        public Place GetPlace(int x, int y)
+        public Player? GetPlayer(Guid id)
         {
-            return new Place(world, x, y);
+            return session.Get<Player>(id);
         }
 
-        public IPlayer GetPlayer(Guid id)
+        public Script? GetScript(Guid id)
         {
-            return session.Get<IPlayer>(id);
+            return session.Get<Script>(id);
         }
 
-        public IScript GetScript(Guid id)
+        public Unit? GetUnit(Guid id)
         {
-            return session.Get<IScript>(id);
+            return session.Get<Unit>(id);
         }
 
-        public IUnit GetUnit(Guid id)
+        public UnitGroup? GetUnitGroup(Guid id)
         {
-            return session.Get<IUnit>(id);
+            return session.Get<UnitGroup>(id);
         }
 
-        public IUnitGroup GetUnitGroup(Guid id)
-        {
-            return session.Get<IUnitGroup>(id);
-        }
-
-        public void Save(IUnit unit)
+        public void Save(Unit unit)
         {
             session.Save(unit);
             session.Flush();
         }
 
-        public void Save(IUnitGroup unitGroup)
+        public void Save(UnitGroup unitGroup)
         {
             session.Save(unitGroup);
             session.Flush();
         }
 
-        public void Save(IPlayer player)
+        public void Save(Player player)
         {
             session.Save(player);
             session.Flush();
         }
 
-        public void Save(IScript script)
+        public void Save(Script script)
         {
             session.Save(script);
             session.Flush();

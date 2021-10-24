@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,33 +10,75 @@ namespace Multiverse
 {
     public abstract class Universe : IUniverse
     {
-        public IWorld World { get; }
+        private bool hasBeenDisposed;
 
-        public UniversePersistence Persistence { get; }
+        public World World { get; }
 
-        public IReadOnlyCollection<Resource> Resources { get; }
+        public IRepository Repository { get; }
 
-        private ScriptingEngineFactory scriptingEngineFactory;
+        public IDictionary<int, Resource> Resources { get; }
 
-        public Universe(UniversePersistence persistence, IEnumerable<Resource> resources)
+        public IDictionary<string, UnitType> UnitTypes { get; }
+
+        protected ScriptingEngineFactory ScriptingEngineFactory { get; }
+
+        public Universe(IRepositoryFactoryFactory repositoryFactoryFactory, int worldId, IEnumerable<Resource> resources)
         {
-            Persistence = persistence;
-            World = persistence.World;
-            Resources = ImmutableArray.Create(resources.ToArray());
-            scriptingEngineFactory = new ScriptingEngineFactory();
+            UnitTypes = new Dictionary<string, UnitType>();
+            var unitVisitor = new RegisterUnitIntoDictionaryVisitor(this, UnitTypes);
+            EnumerateUnits(unitVisitor);
+            UnitTypes = new ReadOnlyDictionary<string, UnitType>(UnitTypes);
+
+            Repository = repositoryFactoryFactory
+                .GetRepositoryFactoryForUniverse(GetType().FullName ?? "!error!", EnumerateUnits)
+                .Create(worldId);
+            World = Repository.World;
+
+            if (World.Universe != GetType().FullName)
+                throw new ArgumentException($"This world is in '{World.Universe}' universe, expected {GetType().FullName}.");
+
+            Resources = new ReadOnlyDictionary<int, Resource>(resources.ToDictionary(x => x.Id));
+            ScriptingEngineFactory = new ScriptingEngineFactory();
         }
 
-        public virtual T SpawnUnit<T>(IPlayer player, Place place) where T : class, IUnit
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!hasBeenDisposed)
+            {
+                if (disposing)
+                {
+                    Repository.Dispose();
+                }
+
+                hasBeenDisposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected abstract void EnumerateUnits(IUnitTypeVisitor v);
+
+        public virtual Place GetPlace(int x, int y)
+        {
+            return new Place(World, x, y);
+        }
+
+        public virtual T SpawnUnit<T>(Player player, Place place) where T : Unit
         {
             var unit = CreateUnit<T>(player, place);
             InitializeUnit(unit, player, place);
-            Persistence.Save(unit);
+            Repository.Save(unit);
             return (T)unit;
         }
 
-        public abstract IUnit CreateUnit<T>(IPlayer player, Place place) where T : class, IUnit;
+        public abstract Unit CreateUnit<T>(Player player, Place place) where T : Unit;
 
-        protected virtual void InitializeUnit(IUnit unit, IPlayer player, Place place)
+        protected virtual void InitializeUnit(Unit unit, Player player, Place place)
         {
             var worldTimestamp = World.Timestamp;
 
@@ -54,7 +97,7 @@ namespace Multiverse
             }
         }
 
-        public UnitAbilityUseResult UseAbility<T>(IUnit unit, UnitAbilityUse use) where T : class, IUnitAbility
+        public UnitAbilityUseResult UseAbility<T>(Unit unit, UnitAbilityUse use) where T : class, IUnitAbility
         {
             var ability = unit.Abilities.OfType<T>().FirstOrDefault();
             if (ability == null)
@@ -63,26 +106,29 @@ namespace Multiverse
             return UseAbility(unit, ability, use);
         }
 
-        protected UnitAbilityUseResult UseAbility(IUnit unit, IUnitAbility ability, UnitAbilityUse use)
+        protected UnitAbilityUseResult UseAbility(Unit unit, IUnitAbility ability, UnitAbilityUse use)
         {
             if (ability.RemainingUses <= 0)
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.NoRemainingUses);
 
             ability.RemainingUses--;
-            return ability.Use(this, unit, use);
+            var result = ability.Use(this, unit, use);
+            Repository.Save(unit);
+            return result;
         }
 
-        public virtual MoveUnitResult MoveUnit(IUnit unit, Place place, int movementRequired)
+        public virtual MoveUnitResult MoveUnit(Unit unit, Place place, int movementRequired)
         {
             if (unit.Immovable)
                 return new MoveUnitResult() { Type = MoveUnitResultType.Immovable };
 
             //TODO Implementovat pohyb. Kontrolu sousedstvi places, kontrolu dostatku pohybovych bodu. Odebirani pohybovych bodu.
             unit.Place = place;
+            Repository.Save(unit);
             return new MoveUnitResult() { Type = MoveUnitResultType.Moved };
         }
 
-        public virtual TransferResourceResult TransferResource(IUnit from, IUnit to, Resource resource, int amount)
+        public virtual TransferResourceResult TransferResource(Unit from, Unit to, Resource resource, int amount)
         {
             if (amount <= 0)
                 return new TransferResourceResult(TransferResourceResultType.NothingToTransfer, 0, amount);
@@ -97,10 +143,12 @@ namespace Multiverse
 
             var added = to.AddResource(resource, howMuchCanBeRemoved);
             from.RemoveResource(resource, added.TransferredAmount);
+            Repository.Save(from);
+            Repository.Save(to);
             return added;
         }
 
-        protected virtual void CooldownForAllAbilities(IEnumerable<IUnit> units)
+        protected virtual void CooldownForAllAbilities(IEnumerable<Unit> units)
         {
             var worldTimestamp = World.Timestamp;
 
@@ -128,34 +176,72 @@ namespace Multiverse
                 }
 
                 if (unitChanged)
-                    Persistence.Save(unit);
+                    Repository.Save(unit);
             }
         }
 
-        protected virtual void RunEventScript(IEnumerable<IUnit> units, Event @event)
+        protected virtual void RunEventScript(IEnumerable<Unit> units, Event @event)
         {
             foreach (var unit in units)
             {
                 if (unit.Script == null)
                     continue;
 
-                var scriptingEngine = scriptingEngineFactory.Create(unit.Script);
-                scriptingEngine.RunEvent(@event);
+                using (var scriptingEngine = ScriptingEngineFactory.Create(unit.Script))
+                {
+                    scriptingEngine.RunEvent(@event, unit);
+                    //TODO Nekam uzivateli ukladat chybove hlasky.
+                }
 
-                Persistence.Save(unit);
+                Repository.Save(unit);
             }
         }
 
         public virtual void Tick()
         {
-            CooldownForAllAbilities(Persistence.Units);
+            CooldownForAllAbilities(Repository.Units);
 
             World.Timestamp++;
-            Persistence.SaveWorld();
+            Repository.SaveWorld();
 
             var tickEvent = new Event(this, World.Timestamp, EventType.Tick);
 
-            RunEventScript(Persistence.Units, tickEvent); //TODO fronta vsech jednotek, ktere muzou reagovat skriptem na tick; postupne vyrizovat v davkach; pridavat do fronty udalosti na ktere je potreba reagovat
+            RunEventScript(Repository.Units, tickEvent); //TODO fronta vsech jednotek, ktere muzou reagovat skriptem na tick; postupne vyrizovat v davkach; pridavat do fronty udalosti na ktere je potreba reagovat
+        }
+
+        public virtual void EnsureInitialWorldState()
+        {
+        }
+
+        public ScanAroundResult ScanAroundUnit(Guid id)
+        {
+            var unit = Repository.GetUnit(id);
+            if (unit == null)
+                return new ScanAroundResult(new List<ScriptingUnit>());
+            return ScanAround(unit);
+        }
+
+        public ScanAroundResult ScanAround(Unit self)
+        {
+            var scanCapability = self.ScanCapability;
+            var placesInRange = scanCapability.GetRange(self.Place).ToList();
+            if (placesInRange.Count == 0)
+                return new ScanAroundResult(new List<ScriptingUnit>());
+
+            var query = Repository.Units;
+            //TODO omezit lepe vzdalenost dohledu - query = query.Where(x => x.Place.X ...)
+            var units = query.ToList();
+            units = units.Where(x => placesInRange.Any(y => y.Equals(x.Place))).ToList();
+
+            var scannedUnits = new List<ScriptingUnit>();
+            foreach (var unit in units)
+            {
+                var scannedUnit = scanCapability.Scan(self, unit);
+                if (scannedUnit != null)
+                    scannedUnits.Add(scannedUnit);
+            }
+
+            return new ScanAroundResult(scannedUnits);
         }
     }
 }
