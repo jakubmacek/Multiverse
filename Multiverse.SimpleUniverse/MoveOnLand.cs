@@ -20,6 +20,8 @@ namespace Multiverse.SimpleUniverse
 
         public override ulong CooldownTime => 0;
 
+        public override int ActionPointCost => 30;
+
         public MoveOnLand()
             :base()
         {

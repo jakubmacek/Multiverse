@@ -16,6 +16,8 @@
 
         int UsesRestoredOnCooldown { get; }
 
+        int ActionPointCost { get; }
+
         UnitAbilityUseResult Use(Universe universe, Unit unit, UnitAbilityUse use);
     }
 }

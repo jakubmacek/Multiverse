@@ -41,6 +41,11 @@ namespace Multiverse
             ScriptingEngineFactory = new ScriptingEngineFactory();
         }
 
+        public void RemoveUnit(Unit unit)
+        {
+            Repository.Delete(unit);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!hasBeenDisposed)
@@ -83,7 +88,7 @@ namespace Multiverse
             unit.Place = place;
             unit.PlayerData = new PlayerData();
             unit.Health = unit.MaxHealth;
-            unit.Movement = unit.MaxMovement;
+            unit.MovementPoints = unit.MaxMovementPoints;
             unit.Abilities.Clear();
             foreach (var ability in unit.CreateAbilities())
             {
@@ -114,9 +119,12 @@ namespace Multiverse
         {
             if (ability.RemainingUses <= 0)
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.NoRemainingUses);
+            if (unit.ActionPoints < ability.ActionPointCost)
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.NoRemainingUses);
 
             if (ability.CooldownTime != 0)
                 ability.RemainingUses--;
+            unit.ActionPoints -= ability.ActionPointCost;
             var result = ability.Use(this, unit, use);
             Repository.Save(unit);
             return result;
@@ -127,10 +135,10 @@ namespace Multiverse
             if (unit.Immovable)
                 return new MoveUnitResult() { Type = MoveUnitResultType.Immovable };
 
-            if (unit.Movement < movementRequired)
+            if (unit.MovementPoints < movementRequired)
                 return new MoveUnitResult() { Type = MoveUnitResultType.NotEnoughMovement };
 
-            unit.Movement -= movementRequired;
+            unit.MovementPoints -= movementRequired;
             unit.Place = place;
             Repository.Save(unit);
             return new MoveUnitResult() { Type = MoveUnitResultType.Moved };
@@ -141,7 +149,7 @@ namespace Multiverse
             if (amount <= 0)
                 return new TransferResourceResult(TransferResourceResultType.NothingToTransfer, 0, amount);
 
-            var howMuchCanBeRemoved = Math.Min(from.GetResourceAmount(resource).Amount, amount);
+            var howMuchCanBeRemoved = Math.Min(from.GetResourceAmount(resource.Id), amount);
             if (howMuchCanBeRemoved <= 0)
                 return new TransferResourceResult(TransferResourceResultType.NothingToTransfer, 0, amount);
 
@@ -160,9 +168,15 @@ namespace Multiverse
             {
                 var unitChanged = false;
 
-                if (unit.Movement < unit.MaxMovement)
+                if (unit.MovementPoints < unit.MaxMovementPoints)
                 {
-                    unit.Movement = unit.MaxMovement;
+                    unit.MovementPoints = unit.MaxMovementPoints;
+                    unitChanged = true;
+                }
+
+                if (unit.ActionPoints < unit.MaxActionPoints)
+                {
+                    unit.ActionPoints = unit.MaxActionPoints;
                     unitChanged = true;
                 }
 

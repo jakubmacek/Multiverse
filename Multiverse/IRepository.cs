@@ -42,5 +42,7 @@ namespace Multiverse
         public abstract void Save(Script script);
 
         public abstract void Save(Message message);
+
+        public abstract void Delete(Unit unit);
     }
 }

@@ -39,7 +39,7 @@ namespace Multiverse.Persistence.NHibernate
 
             Property(x => x.Name, p => { p.NotNullable(true); p.Length(200); });
             Property(x => x.Health, p => { p.NotNullable(true); });
-            Property(x => x.Movement, p => { p.NotNullable(true); });
+            Property(x => x.MovementPoints, p => { p.NotNullable(true); });
             Property(x => x.Abilities, p => { p.NotNullable(true); p.Length(40000); p.Type<JsonColumnType<List<IUnitAbility>>>(); });
             Property(x => x.Resources, p => { p.NotNullable(true); p.Length(4000); p.Type<JsonColumnType<Dictionary<int, int>>>(); });
         }

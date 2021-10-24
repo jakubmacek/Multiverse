@@ -86,6 +86,12 @@ namespace Multiverse.Persistence.NHibernate
             session.Flush();
         }
 
+        public void Delete(Unit unit)
+        {
+            session.Delete(unit);
+            session.Flush();
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!hasBeenDisposed)

@@ -32,9 +32,9 @@ namespace Multiverse
 
         public bool? immovable => _seeHealthAndMovement ? _unit.Immovable : null;
 
-        public int? movement => _seeHealthAndMovement ? _unit.Movement : null;
+        public int? movement => _seeHealthAndMovement ? _unit.MovementPoints : null;
 
-        public int? maxMovement => _seeHealthAndMovement ? _unit.MaxMovement : null;
+        public int? maxMovement => _seeHealthAndMovement ? _unit.MaxMovementPoints : null;
 
         public ScriptingUnitResourceCapacities? capacities { get; init; }
 

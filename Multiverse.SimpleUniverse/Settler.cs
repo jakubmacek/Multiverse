@@ -16,7 +16,9 @@ namespace Multiverse.SimpleUniverse
 
         public override bool Immovable => false;
 
-        public override int MaxMovement => 1;
+        public override int MaxMovementPoints => 1;
+
+        public override int MaxActionPoints => 50;
 
         public override IScanCapability ScanCapability => ScanCapabilities.SeeGaiaAndOwn1;
 

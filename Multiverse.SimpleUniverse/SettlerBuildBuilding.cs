@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Multiverse.SimpleUniverse
 {
-    public class ScanCapabilities : Multiverse.ScanCapabilities
+    public class SettlerBuildBuilding : BuildBuilding
     {
-        public static readonly IScanCapability SeeGaiaAndOwn1 = new SeeGaiaAndOwnScanCapability(1);
+        public override int BuildingWorkPerUse => 100;
+
+        public override int ActionPointCost => 50;
     }
 }

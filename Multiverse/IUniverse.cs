@@ -32,5 +32,7 @@ namespace Multiverse
         ScanAroundResult ScanAround(Unit unit);
 
         void EnsureInitialWorldState();
+
+        void RemoveUnit(Unit unit);
     }
 }

@@ -25,9 +25,13 @@ namespace Multiverse
 
         bool Immovable { get; }
 
-        int Movement { get; set; }
+        int MovementPoints { get; set; }
 
-        int MaxMovement { get; }
+        int MaxMovementPoints { get; }
+
+        int ActionPoints { get; set; }
+
+        int MaxActionPoints { get; }
 
         Script? Script { get; set; }
 
@@ -45,7 +49,7 @@ namespace Multiverse
 
         //UnitResource GetRemainingCapacity(Resource resource);
 
-        UnitResource GetResourceAmount(Resource resource);
+        int GetResourceAmount(int resourceId);
 
         //ResourceCapacity GetResourceCapacity(Resource resource);
 
@@ -53,6 +57,6 @@ namespace Multiverse
 
         TransferResourceResult RemoveResource(Resource resource, int amount);
 
-        void SetResourceAmount(Resource resource, int amount);
+        void SetResourceAmount(int resourceId, int amount);
     }
 }

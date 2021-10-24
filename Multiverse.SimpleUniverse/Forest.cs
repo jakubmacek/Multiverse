@@ -14,7 +14,9 @@ namespace Multiverse.SimpleUniverse
 
         public override bool Immovable => true;
 
-        public override int MaxMovement => 0;
+        public override int MaxMovementPoints => 0;
+
+        public override int MaxActionPoints => 0;
 
         public override IScanCapability ScanCapability => ScanCapabilities.Nothing;
 

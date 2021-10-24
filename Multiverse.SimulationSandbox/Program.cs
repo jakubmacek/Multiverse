@@ -46,7 +46,7 @@ namespace Multiverse.SimulationSandbox
             var place_1_0 = new Place(1, 0);
 
             var forest1 = universe.SpawnUnit<Forest>(gaia, place_1_0);
-            forest1.SetResourceAmount(R.Wood, 5000);
+            forest1.SetResourceAmount(R.Wood.Id, 5000);
 
             var settler1 = universe.SpawnUnit<Settler>(player1, place_0_0);
             settler1.Script = settlerScript;
@@ -140,7 +140,7 @@ namespace Multiverse.SimulationSandbox
                 if (unit.Immovable)
                     Console.Write("\timmovable");
                 else
-                    Console.Write($"\tMovement {unit.Movement} / {unit.MaxMovement}");
+                    Console.Write($"\tMovement {unit.MovementPoints} / {unit.MaxMovementPoints}");
                 Console.WriteLine();
                 foreach (var a in unit.Abilities)
                     Console.WriteLine($"\tability '{a.Name}', uses {a.RemainingUses} / {a.MaxAvailableUses} (restore {a.UsesRestoredOnCooldown} each {a.CooldownTime}, on {a.CooldownTimestamp})");

@@ -23,6 +23,9 @@ namespace Multiverse
         [Newtonsoft.Json.JsonIgnore]
         public abstract UnitAbilityType Type { get; }
 
+        [Newtonsoft.Json.JsonIgnore]
+        public abstract int ActionPointCost { get; }
+
         public virtual int RemainingUses { get; set; }
 
         public virtual ulong CooldownTimestamp { get; set; }

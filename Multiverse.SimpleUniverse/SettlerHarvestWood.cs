@@ -15,5 +15,7 @@ namespace Multiverse.SimpleUniverse
         public override ulong CooldownTime => 1;
 
         public override int HarvestedOnUse => 10;
+
+        public override int ActionPointCost => 10;
     }
 }

@@ -3,6 +3,8 @@ declare const BuildingWork: number;
 
 declare const Forest: string;
 declare const Settler: string;
+declare const Warehouse: string;
+declare const WarehouseBuildingSite: string;
 
 declare const AbilityTypeOther: number;
 declare const AbilityTypeMovement: number;
@@ -36,6 +38,7 @@ interface UnitAbility {
     maxAvailableUses: number;
     remainingUses: number;
     usesRestoredOnCooldown: number;
+    actionPointCost: number;
 }
 
 interface UnitAbilities {
@@ -54,8 +57,10 @@ interface Unit {
     health?: number;
     maxHealth?: number;
     immovable?: boolean;
-    movement?: number;
-    maxMovement?: number;
+    movementPoints?: number;
+    maxMovementPoints?: number;
+    actionPoints?: number;
+    maxActionPoints?: number;
     capacities?: UnitCapacities;
     resources?: UnitResources;
     abilities?: UnitAbilities;

@@ -11,7 +11,7 @@ namespace Multiverse
         public virtual Guid Id { get; set; }
 
         public virtual Player? Player { get; set; }
-        
+
         public virtual World? World { get; set; }
 
         public virtual Place Place { get; set; }
@@ -28,11 +28,15 @@ namespace Multiverse
 
         public abstract int MaxHealth { get; }
 
-        public virtual int Movement { get; set; }
+        public virtual int MovementPoints { get; set; }
 
         public abstract bool Immovable { get; }
 
-        public abstract int MaxMovement { get; }
+        public abstract int MaxMovementPoints { get; }
+
+        public virtual int ActionPoints { get; set; }
+
+        public abstract int MaxActionPoints { get; }
 
         public abstract IScanCapability ScanCapability { get; }
 
@@ -51,16 +55,16 @@ namespace Multiverse
 
         public abstract IEnumerable<IUnitAbility> CreateAbilities();
 
-        public virtual UnitResource GetResourceAmount(Resource resource)
+        public virtual int GetResourceAmount(int resourceId)
         {
-            if (Resources.TryGetValue(resource.Id, out int amount))
-                return new UnitResource(resource, amount);
-            return new UnitResource(resource, 0);
+            if (Resources.TryGetValue(resourceId, out int amount))
+                return amount;
+            return 0;
         }
 
-        public virtual void SetResourceAmount(Resource resource, int amount)
+        public virtual void SetResourceAmount(int resourceId, int amount)
         {
-            Resources[resource.Id] = amount;
+            Resources[resourceId] = amount;
         }
 
         public virtual TransferResourceResult AddResource(Resource resource, int amount)
@@ -78,7 +82,7 @@ namespace Multiverse
                 return new TransferResourceResult(TransferResourceResultType.OverCapacity, 0, amount);
 
             var addedAmount = Math.Min(amount, capacity - currentAmount);
-            SetResourceAmount(resource, currentAmount + addedAmount);
+            SetResourceAmount(resource.Id, currentAmount + addedAmount);
             if (addedAmount == amount)
                 return new TransferResourceResult(TransferResourceResultType.TransferredCompletely, addedAmount, 0);
             else
@@ -107,7 +111,7 @@ namespace Multiverse
             if (removedAmount == 0)
                 return new TransferResourceResult(TransferResourceResultType.NothingToTransfer, 0, amount);
 
-            SetResourceAmount(resource, currentAmount - removedAmount);
+            SetResourceAmount(resource.Id, currentAmount - removedAmount);
             if (removedAmount == amount)
                 return new TransferResourceResult(TransferResourceResultType.TransferredCompletely, removedAmount, 0);
             else

@@ -23,6 +23,8 @@ namespace Multiverse.SimpleUniverse
         {
             v.Visit<Forest>();
             v.Visit<Settler>();
+            v.Visit<Warehouse>();
+            v.Visit<WarehouseBuildingSite>();
         }
 
         public override void EnsureInitialWorldState()
@@ -41,6 +43,10 @@ namespace Multiverse.SimpleUniverse
                 return new Settler();
             else if (typeOfT == typeof(Forest))
                 return new Forest();
+            else if (typeOfT == typeof(Warehouse))
+                return new Warehouse();
+            else if (typeOfT == typeof(WarehouseBuildingSite))
+                return new WarehouseBuildingSite();
             else
                 throw new ArgumentException("This unit type is not known in the universe.");
         }
