@@ -14,9 +14,9 @@ namespace Multiverse
                 Add(new ScriptingUnitAbility(ability));
         }
 
-        public List<ScriptingUnitAbility> withType(int type)
+        public ScriptingUnitAbility[] withType(int type)
         {
-            return this.Where(x => (x.type & type) != 0).ToList();
+            return this.Where(x => (x.type & type) != 0).ToArray();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿function list_to_table(list)
     local table = {};
     local i
-    for i = 0, list.Count - 1 do
+    for i = 0, list.Length - 1 do
         table[i + 1] = list[i]
     end
     return table

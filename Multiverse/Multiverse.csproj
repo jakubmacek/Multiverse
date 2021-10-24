@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Jint" Version="3.0.0-beta-2035" />
     <PackageReference Include="NeoLua" Version="1.3.13" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLua" Version="1.5.11" />

@@ -9,7 +9,7 @@ namespace Multiverse
     public enum ScriptEngineType
     {
         Lua = 1,
-        //JavaScript = 2,
+        JavaScript = 2,
         //Python = 3,
     }
 }

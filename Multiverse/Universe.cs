@@ -188,6 +188,8 @@ namespace Multiverse
         {
             foreach (var unit in units)
             {
+                if (unit.Dead)
+                    continue;
                 var script = unit.Script;
                 if (script == null)
                     continue;

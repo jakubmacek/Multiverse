@@ -8,7 +8,7 @@ namespace Multiverse.SimpleUniverse
 {
     public class R : Resources
     {
-        public static Resource Wood = new Resource(1, "wood", "wood");
+        public static Resource Wood = new Resource(1, "Wood", "wood");
 
         public static IEnumerable<Resource> All
         {

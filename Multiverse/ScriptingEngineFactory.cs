@@ -11,6 +11,8 @@ namespace Multiverse
         {
             if (script.Type == ScriptEngineType.Lua)
                 return new LuaScriptingEngine(script, libraries);
+            else if (script.Type == ScriptEngineType.JavaScript)
+                return new JintScriptingEngine(script, libraries);
             else
                 throw new ArgumentException($"Unknown scripting engine {script.Type} in script '{script.Id}'.", nameof(script));
         }

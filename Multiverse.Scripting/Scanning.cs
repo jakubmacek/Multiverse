@@ -26,13 +26,13 @@ namespace Multiverse.Scripting
 
         class Implementation
         {
-            public Func<ScriptingUnitSelf, List<ScriptingUnit>>? scanAround;
+            public Func<ScriptingUnitSelf, ScriptingUnit[]>? scanAround;
             //public Func<string, List<ScriptingUnit>, List<ScriptingUnit>>? filterByType;
         }
 
-        public List<ScriptingUnit> ScanAround(ScriptingUnitSelf self)
+        public ScriptingUnit[] ScanAround(ScriptingUnitSelf self)
         {
-            return _universe.ScanAroundUnit(self.idguid).Units;
+            return _universe.ScanAroundUnit(self.idguid).Units.ToArray();
         }
     }
 }

@@ -40,6 +40,8 @@ namespace Multiverse
 
         public virtual ICollection<IUnitAbility> Abilities { get; set; } = new List<IUnitAbility>();
 
+        public virtual bool Dead => !Indestructible && Health == 0;
+
         public abstract int GetResourceCapacity(int resourceId);
 
         //public virtual ResourceCapacity GetResourceCapacity(Resource resource)

@@ -8,6 +8,6 @@ namespace Multiverse
 {
     public class Resources
     {
-        public static Resource BuildingWork = new Resource(-1, "building_work", "building work");
+        public static Resource BuildingWork = new Resource(-1, "BuildingWork", "building work");
     }
 }

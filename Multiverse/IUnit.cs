@@ -15,6 +15,8 @@ namespace Multiverse
 
         Place Place { get; set; }
 
+        bool Dead { get; }
+
         bool Indestructible { get; }
 
         int Health { get; set; }

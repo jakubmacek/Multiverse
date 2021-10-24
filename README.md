@@ -29,7 +29,6 @@ Currently, there is a single, very simple, universe programmed. If you want a si
   * World map view, unit view with list of their resources, abilities, etc. This is fairly necessary for debugging. Maybe use Vue.js / React, maybe dynamically generated SVG for the map.
   * Player script management - create new script, assign to units, show log, send message to a unit (i.e. an order).
 * Write documentation with script examples.
-* Possibly implement JavaScript (TypeScript) as an alternative scripting language. It should be easier to write TS scripts, but Lua is probably more efficient.
 * Implement turn-based battles where all participating units have to declare handler functions in their script.
 * Implement communication between units. Should the unit receive communication immediately or during the next tick? Should distance be limited? This will affect the scenario where individual units are fairly dumb, but they obey commands from their commanding unit.
 * Implement scripting libraries - especially pathfinding.

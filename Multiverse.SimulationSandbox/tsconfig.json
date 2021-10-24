@@ -1,0 +1,14 @@
+{
+	"compileOnSave": true,
+	"compilerOptions": {
+		"alwaysStrict": true,
+		"module": "None",
+		"removeComments": false,
+		"preserveConstEnums": true,
+		"sourceMap": false,
+		"noImplicitAny": true
+	},
+	"files": [
+		"SettlerScript.ts"
+	]
+}

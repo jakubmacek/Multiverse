@@ -13,6 +13,7 @@ namespace Multiverse.Scripting
         class Implementation
         {
             public Action<string>? error;
+            public Action<string>? log;
         }
 
         public Debugging(IUniverse universe)
@@ -26,8 +27,14 @@ namespace Multiverse.Scripting
 
             engine.RegisterObject("debugging", new Implementation
             {
-                error = Error
+                error = Error,
+                log = Log,
             });
+        }
+
+        private void Log(string message)
+        {
+            Console.Out.WriteLine(message);
         }
 
         private void Error(string message)

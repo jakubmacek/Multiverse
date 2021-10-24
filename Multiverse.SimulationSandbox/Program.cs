@@ -36,8 +36,10 @@ namespace Multiverse.SimulationSandbox
                 Id = Guid.NewGuid(),
                 Name = "Settler AI",
                 Player = player1,
-                Type = ScriptEngineType.Lua,
-                Source = System.IO.File.ReadAllText("../../../SettlerScript.lua"),
+                //Type = ScriptEngineType.Lua,
+                //Source = System.IO.File.ReadAllText("../../../SettlerScript.lua"),
+                Type = ScriptEngineType.JavaScript,
+                Source = System.IO.File.ReadAllText("../../../SettlerScript.js"),
             };
             repository.Save(settlerScript);
             var place_0_0 = new Place(0, 0);

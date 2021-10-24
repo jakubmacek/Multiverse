@@ -51,11 +51,26 @@ namespace Multiverse
 
             // Sandbox
             lua.DoString(@"
+		        require = function () end
 		        import = function () end
+		        dofile = function () end
+		        loadfile = function () end
+		        os.execute = function () end
+		        os.exit = function () end
+		        os.getenv = function () end
+		        os.remove = function () end
+		        os.rename = function () end
+		        os.setlocale = function () end
+		        os.tmpname = function () end
+                coroutine = nil
+                package = nil
+                io = nil
+                debug = nil
+
                 -- print = function () end
 	        ", "sandboxing");
 
-            //TODO Odstranit dalsi standardni knihovni funkce. Napriklad praci se soubory.
+            //TODO Implementovat mechanismus, kterym jde vkladat jine skripty? Musel by tu byt pristup k databazi, nebo si to prednacist jinak.
 
             foreach (var library in libraries)
                 library.Register(this);
