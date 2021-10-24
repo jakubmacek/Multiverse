@@ -23,7 +23,8 @@ namespace Multiverse.Scripting
             foreach (var unitType in _universe.UnitTypes.Values)
                 engine.RegisterObject(unitType.ConstantName, unitType.ConstantName);
 
-            //TODO ability type flags
+            foreach (var abilityType in Enum.GetValues(typeof(UnitAbilityType)))
+                engine.RegisterObject("AbilityType" + Enum.GetName(typeof(UnitAbilityType), abilityType), abilityType);
         }
     }
 }

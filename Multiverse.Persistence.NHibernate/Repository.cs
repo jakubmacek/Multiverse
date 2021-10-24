@@ -22,13 +22,15 @@ namespace Multiverse.Persistence.NHibernate
 
         public IQueryable<UnitGroup> UnitGroups => session.Query<UnitGroup>().Where(x => x.World == world);
 
+        public IQueryable<Message> Messages => session.Query<Message>().Where(x => x.World == world);
+
         internal Repository(ISession session, World world)
         {
             this.session = session;
             this.world = world;
         }
 
-        public Player? GetPlayer(Guid id)
+        public Player? GetPlayer(int id)
         {
             return session.Get<Player>(id);
         }
@@ -69,6 +71,12 @@ namespace Multiverse.Persistence.NHibernate
         public void Save(Script script)
         {
             session.Save(script);
+            session.Flush();
+        }
+
+        public void Save(Message message)
+        {
+            session.Save(message);
             session.Flush();
         }
 

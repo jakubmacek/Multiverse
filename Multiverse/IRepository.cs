@@ -15,7 +15,7 @@ namespace Multiverse
 
         public abstract IQueryable<Player> Players { get; }
 
-        public abstract Player? GetPlayer(Guid id);
+        public abstract Player? GetPlayer(int id);
 
         public abstract IQueryable<Script> Scripts { get; }
 
@@ -26,6 +26,8 @@ namespace Multiverse
         public abstract Unit? GetUnit(Guid id);
 
         public abstract IQueryable<UnitGroup> UnitGroups { get; }
+
+        public abstract IQueryable<Message> Messages { get; }
 
         public abstract UnitGroup? GetUnitGroup(Guid id);
 
@@ -38,5 +40,7 @@ namespace Multiverse
         public abstract void Save(Player player);
 
         public abstract void Save(Script script);
+
+        public abstract void Save(Message message);
     }
 }

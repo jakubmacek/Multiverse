@@ -8,7 +8,7 @@ namespace Multiverse.SimpleUniverse
 {
     public sealed class SimpleUniverse : Universe
     {
-        public static readonly Guid GaiaPlayerId = Guid.Empty;
+        public static readonly int GaiaPlayerId = 0;
 
         public SimpleUniverse(IRepositoryFactoryFactory repositoryFactoryFactory, int worldId)
             : base(repositoryFactoryFactory, worldId, R.All)

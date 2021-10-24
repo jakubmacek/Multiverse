@@ -4,7 +4,7 @@ namespace Multiverse
 {
     public interface IPlayer
     {
-        Guid Id { get; set; }
+        int Id { get; set; }
 
         string Name { get; set; }
     }

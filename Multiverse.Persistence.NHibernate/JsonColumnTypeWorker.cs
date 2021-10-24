@@ -39,9 +39,10 @@
             return JsonConvert.DeserializeObject<T>(json, Settings);
         }
 
-        public static void PopulateObject<T>(string json, T? obj)
+        public static void PopulateObject<T>(string json, T obj)
         {
-            JsonConvert.PopulateObject(json, obj, Settings);
+            if (json != null && obj != null)
+                JsonConvert.PopulateObject(json, obj, Settings);
         }
     }
 }

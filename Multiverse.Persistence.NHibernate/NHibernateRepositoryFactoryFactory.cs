@@ -50,6 +50,7 @@ namespace Multiverse.Persistence.NHibernate
             map.AddMapping<ScriptMap>();
             map.AddMapping<UnitGroupMap>();
             map.AddMapping<UnitMap>();
+            map.AddMapping<MessageMap>();
 
             enumerateUnitTypes(new AddUnitsToModelMapper(map));
 

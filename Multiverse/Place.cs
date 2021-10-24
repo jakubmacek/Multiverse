@@ -2,7 +2,7 @@
 
 namespace Multiverse
 {
-    public readonly struct Place : IEquatable<Place>
+    public readonly struct Place
     {
         public readonly int X;
 
@@ -25,9 +25,24 @@ namespace Multiverse
                    Y == other.Y;
         }
 
+        public static bool operator ==(Place lhs, Place rhs)
+        {
+            return (lhs.X == rhs.X) && (lhs.Y == rhs.Y);
+        }
+
+        public static bool operator !=(Place lhs, Place rhs)
+        {
+            return (lhs.X != rhs.X) || (lhs.Y != rhs.Y);
+        }
+
         public override int GetHashCode()
         {
             return HashCode.Combine(X, Y);
+        }
+
+        public override string ToString()
+        {
+            return $"Point({X}, {Y})";
         }
     }
 }

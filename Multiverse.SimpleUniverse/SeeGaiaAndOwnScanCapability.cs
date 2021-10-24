@@ -17,7 +17,7 @@ namespace Multiverse.SimpleUniverse
 
         public IEnumerable<Place> GetRange(Place place)
         {
-            return new Place[1] { place }; //TODO dosah _range hexu
+            return HexGrid.WithinDistance(place, _range);
         }
 
         public ScriptingUnit Scan(IUnit scanner, IUnit scanned)

@@ -23,7 +23,7 @@ namespace Multiverse.Persistence.NHibernate
         {
             //InitializeStorage();
 
-            var session = this._sessionFactory.OpenSession();
+            var session = _sessionFactory.OpenSession();
             //session.FlushMode = FlushMode.Auto;
 
             var world = session.Get<World>(worldId);

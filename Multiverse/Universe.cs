@@ -56,7 +56,6 @@ namespace Multiverse
 
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
@@ -132,10 +131,6 @@ namespace Multiverse
             if (howMuchCanBeRemoved <= 0)
                 return new TransferResourceResult(TransferResourceResultType.NothingToTransfer, 0, amount);
 
-            //var remainingCapacity = use.Unit.GetRemainingCapacity(wood);
-            //var harvested = woodSource.RemoveResource(wood, Math.Min(remainingCapacity.Amount, HarvestedOnUse));
-            //use.Unit.AddResource(wood, harvested.TransferredAmount);
-
             var added = to.AddResource(resource, howMuchCanBeRemoved);
             from.RemoveResource(resource, added.TransferredAmount);
             Repository.Save(from);
@@ -192,6 +187,19 @@ namespace Multiverse
             }
         }
 
+        protected virtual void BatchRunEventScriptForAllUnits(Event @event)
+        {
+            const int batchSize = 100;
+            var allIds = Repository.Units.Select(x => x.Id).ToList();
+
+            for (int offset = 0; offset < allIds.Count; offset += batchSize)
+            {
+                var ids = allIds.GetRange(offset, batchSize);
+                var units = Repository.Units.Where(x => ids.Contains(x.Id)).ToList();
+                RunEventScript(units, @event);
+            }
+        }
+
         public virtual void Tick()
         {
             CooldownForAllAbilities(Repository.Units);
@@ -201,7 +209,7 @@ namespace Multiverse
 
             var tickEvent = new Event(this, World.Timestamp, EventType.Tick);
 
-            RunEventScript(Repository.Units, tickEvent); //TODO fronta vsech jednotek, ktere muzou reagovat skriptem na tick; postupne vyrizovat v davkach; pridavat do fronty udalosti na ktere je potreba reagovat
+            BatchRunEventScriptForAllUnits(tickEvent);
         }
 
         public virtual void EnsureInitialWorldState()
