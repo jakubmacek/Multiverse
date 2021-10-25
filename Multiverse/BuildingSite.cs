@@ -16,17 +16,11 @@ namespace Multiverse
 
         public override int MaxHealth => 1;
 
-        public abstract int TicksToBuild { get; }
-
-        public virtual int BuiltTicks { get; set; }
-
         public override int MaxActionPoints => 0;
 
         public override IScanCapability ScanCapability => ScanCapabilities.Nothing;
 
-        public abstract IEnumerable<ResourceAmount> RequiredResourcesPerTick { get; }
-
-        public IEnumerable<ResourceAmount> RequiredResourcesTotal => RequiredResourcesPerTick.Select(x => new ResourceAmount(x.ResourceId, x.Amount * TicksToBuild));
+        public abstract IEnumerable<ResourceAmount> RequiredResources { get; }
 
         public override IEnumerable<IUnitAbility> CreateAbilities()
         {
@@ -35,9 +29,9 @@ namespace Multiverse
 
         public override int GetResourceCapacity(int resourceId)
         {
-            foreach (var resourceAmount in RequiredResourcesPerTick)
+            foreach (var resourceAmount in RequiredResources)
                 if (resourceAmount.ResourceId == resourceId)
-                    return (TicksToBuild - BuiltTicks) * resourceAmount.Amount;
+                    return resourceAmount.Amount;
             return 0;
         }
 

@@ -18,5 +18,8 @@ namespace Multiverse
         NothingToDo = 7,
         NotEnoughMovement = 8,
         NotEnoughResources = 9,
+        InvalidResource = 10,
+        NotEnoughCapacity = 11,
+        InvalidUnitType = 12,
     }
 }

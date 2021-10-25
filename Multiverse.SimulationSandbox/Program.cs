@@ -21,7 +21,7 @@ namespace Multiverse.SimulationSandbox
             System.IO.File.Copy(templateFilePath, filePath);
 
             //CreateEmptyUniverse(templateFilePath);
-            RunUniverse(filePath, 7, CreateInitialState);
+            RunUniverse(filePath, 20, CreateInitialState);
         }
 
         private static void CreateInitialState(IUniverse universe)
@@ -133,6 +133,7 @@ namespace Multiverse.SimulationSandbox
                 Console.WriteLine($"{unit.Name} ({unit.GetType().Name} of player {unit.Player?.Name}) at {unit.Place.X}, {unit.Place.Y}");
                 if (unit.Script != null)
                     Console.WriteLine($"\tscript '{unit.Script.Name}' with data '{unit.PlayerData.Value}'");
+                Console.Write($"\tActions {unit.ActionPoints} / {unit.MaxActionPoints}");
                 if (unit.Indestructible)
                     Console.Write("\tindestructible");
                 else

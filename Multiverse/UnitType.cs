@@ -36,5 +36,10 @@ namespace Multiverse
             return other != null &&
                    ConstantName == other.ConstantName;
         }
+
+        public override string ToString()
+        {
+            return $"UnitType({ConstantName})";
+        }
     }
 }

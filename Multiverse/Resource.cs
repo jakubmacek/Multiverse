@@ -14,11 +14,14 @@ namespace Multiverse
 
         public readonly string Name;
 
-        public Resource(int id, string constantName, string name)
+        public readonly bool FreelyTransferrable;
+
+        public Resource(int id, string constantName, string name, bool freelyTransferrable)
         {
             Id = id;
             ConstantName = constantName;
             Name = name;
+            FreelyTransferrable = freelyTransferrable;
         }
 
         public override bool Equals(object? obj)
@@ -34,6 +37,11 @@ namespace Multiverse
         public override int GetHashCode()
         {
             return HashCode.Combine(Id);
+        }
+
+        public override string ToString()
+        {
+            return $"Resource({ConstantName}#{Id})";
         }
     }
 }

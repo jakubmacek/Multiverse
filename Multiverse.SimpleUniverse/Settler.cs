@@ -26,6 +26,9 @@ namespace Multiverse.SimpleUniverse
         {
             yield return new MoveOnLand();
             yield return new SettlerHarvestWood();
+            yield return new SettlerBuildBuilding();
+            yield return new SettlerStartBuildingSite();
+            yield return new TransferResource();
         }
 
         public override int GetResourceCapacity(int resourceId)

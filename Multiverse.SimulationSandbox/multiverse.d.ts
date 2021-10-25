@@ -83,4 +83,8 @@ declare const abilities: {
     use(self: UnitSelf, abilityName: string): UnitAbilityUseResult
     use(self: UnitSelf, abilityName: string, targetUnit: Unit): UnitAbilityUseResult
     use(self: UnitSelf, abilityName: string, targetUnit: Unit, targetPlaceX: number, targetPlaceY: number): UnitAbilityUseResult
+
+    startBuildingSite(self: UnitSelf, buildingSiteName: string): UnitAbilityUseResult;
+    build(self: UnitSelf, targetBuildingSite: Unit): UnitAbilityUseResult;
+    transferResource(self: UnitSelf, target: Unit, resourceId: number, amount: number): UnitAbilityUseResult;
 }

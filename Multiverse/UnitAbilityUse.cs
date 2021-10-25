@@ -12,10 +12,22 @@ namespace Multiverse
 
         public readonly Place TargetPlace;
 
-        public UnitAbilityUse(Unit? targetUnit, Place targetPlace)
+        public string? Name;
+
+        public readonly Resource? Resource;
+
+        public int Amount;
+
+        public UnitType? UnitType;
+
+        public UnitAbilityUse(Unit? targetUnit, Place targetPlace, string? name = null, Resource? resource = null, int amount = 0, UnitType? unitType = null)
         {
             TargetUnit = targetUnit;
             TargetPlace = targetPlace;
+            Name = name;
+            Resource = resource;
+            Amount = amount;
+            UnitType = unitType;
         }
     }
 }

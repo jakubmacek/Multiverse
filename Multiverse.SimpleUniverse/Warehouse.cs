@@ -16,7 +16,7 @@ namespace Multiverse.SimpleUniverse
 
         public override IEnumerable<IUnitAbility> CreateAbilities()
         {
-            yield return new TransferResources();
+            yield return new TransferResource();
         }
 
         public override int GetResourceCapacity(int resourceId)

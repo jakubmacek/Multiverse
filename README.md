@@ -16,7 +16,6 @@ Currently, there is a single, very simple, universe programmed. If you want a si
 ## TO-DO SimpleUniverse
 
 * Think of some basic measure of success - perhaps the player with most wood is the best?
-* Create a storage building. Implement "create building site", "build" and "store" actions. The building site is placed and cannot be moved, has 1 HP (is vulnerable). According to a selected building, some resources (including "building work" resource) are needed. Bulding site will have in-game script force-assigned. Building takes multiple ticks to build. Settlers/workers have to drop off material and provide work using "build" action. Then enough resources and work has been done, site's tick counter increases and part of the resources is comsumed.
 * Implement attack related actions.
 
 ## TO-DO general

@@ -15,11 +15,11 @@ namespace Multiverse
 
         void Tick();
 
-        Unit CreateUnit<T>(Player player, Place place) where T : Unit;
-
         MoveUnitResult MoveUnit(Unit unit, Place place, int movementRequired);
 
         T SpawnUnit<T>(Player player, Place place) where T : Unit;
+
+        Unit SpawnUnit(UnitType unit, Player player, Place place);
 
         TransferResourceResult TransferResource(Unit from, Unit to, Resource resource, int amount);
 

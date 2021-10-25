@@ -69,13 +69,19 @@ namespace Multiverse
 
         public virtual T SpawnUnit<T>(Player player, Place place) where T : Unit
         {
-            var unit = CreateUnit<T>(player, place);
-            InitializeUnit(unit, player, place);
-            Repository.Save(unit);
-            return (T)unit;
+            var unitType = UnitTypes.Values.First(x => x.Type == typeof(T));
+            return (T)SpawnUnit(unitType, player, place);
         }
 
-        public abstract Unit CreateUnit<T>(Player player, Place place) where T : Unit;
+        public Unit SpawnUnit(UnitType unitType, Player player, Place place)
+        {
+            var unit = CreateUnit(unitType, player, place);
+            InitializeUnit(unit, player, place);
+            Repository.Save(unit);
+            return unit;
+        }
+
+        public abstract Unit CreateUnit(UnitType unitType, Player player, Place place);
 
         protected virtual void InitializeUnit(Unit unit, Player player, Place place)
         {
@@ -184,7 +190,7 @@ namespace Multiverse
                 {
                     if (ability.RemainingUses < ability.MaxAvailableUses)
                     {
-                        if (ability.CooldownTime != 0 && ability.CooldownTimestamp >= worldTimestamp)
+                        if (ability.CooldownTime != 0 && ability.CooldownTimestamp <= worldTimestamp)
                         {
                             ability.RemainingUses = Math.Min(ability.MaxAvailableUses, ability.RemainingUses + ability.UsesRestoredOnCooldown);
                             ability.CooldownTimestamp = worldTimestamp + ability.CooldownTime;

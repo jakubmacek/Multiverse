@@ -51,7 +51,7 @@ namespace Multiverse
             {
                 options.Culture = new System.Globalization.CultureInfo("cs-CZ");
                 options.TimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central Europe Standard Time");
-                options.LimitMemory(1_000_000); // 1 MB
+                options.LimitMemory(2_000_000); // 1 MB
                 //options.TimeoutInterval(TimeSpan.FromSeconds(1));
                 options.MaxStatements(10000);
                 //options.CancellationToken(cancellationToken);

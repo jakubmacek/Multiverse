@@ -8,14 +8,12 @@ namespace Multiverse.SimpleUniverse
 {
     public class WarehouseBuildingSite : BuildingSite<Warehouse>
     {
-        public override int TicksToBuild => 3;
-
-        public override IEnumerable<ResourceAmount> RequiredResourcesPerTick
+        public override IEnumerable<ResourceAmount> RequiredResources
         {
             get
             {
                 yield return new ResourceAmount(R.BuildingWork.Id, 150);
-                yield return new ResourceAmount(R.Wood.Id, 10);
+                yield return new ResourceAmount(R.Wood.Id, 50);
             }
         }
 

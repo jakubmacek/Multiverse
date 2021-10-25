@@ -36,19 +36,12 @@ namespace Multiverse.SimpleUniverse
                 Repository.Save(gaia);
         }
 
-        public override Unit CreateUnit<T>(Player player, Place place)
+        public override Unit CreateUnit(UnitType unitType, Player player, Place place)
         {
-            var typeOfT = typeof(T);
-            if (typeOfT == typeof(Settler))
-                return new Settler();
-            else if (typeOfT == typeof(Forest))
-                return new Forest();
-            else if (typeOfT == typeof(Warehouse))
-                return new Warehouse();
-            else if (typeOfT == typeof(WarehouseBuildingSite))
-                return new WarehouseBuildingSite();
-            else
-                throw new ArgumentException("This unit type is not known in the universe.");
+            var unit = Activator.CreateInstance(unitType.Type);
+            if (unit == null)
+                throw new Exception("Cannot create unit.");
+            return (Unit)unit;
         }
     }
 }

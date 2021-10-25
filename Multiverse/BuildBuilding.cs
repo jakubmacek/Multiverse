@@ -28,30 +28,19 @@ namespace Multiverse
 
             buildingSite.AddResource(Resources.BuildingWork, BuildingWorkPerUse);
 
-            BuildTick(buildingSite);
-
-            if (buildingSite.BuiltTicks >= buildingSite.TicksToBuild)
-            {
-                var building = buildingSite.SpawnBuilding(universe);
-                universe.RemoveUnit(buildingSite);
-            }
+            Finalize(universe, buildingSite);
 
             return new UnitAbilityUseResult(UnitAbilityUseResultType.Success);
         }
 
-        private void BuildTick(BuildingSite buildingSite)
+        private void Finalize(Universe universe, BuildingSite buildingSite)
         {
-            if (buildingSite.BuiltTicks >= buildingSite.TicksToBuild)
-                return;
-
-            foreach (var buildResource in buildingSite.RequiredResourcesPerTick)
+            foreach (var buildResource in buildingSite.RequiredResources)
                 if (buildingSite.GetResourceAmount(buildResource.ResourceId) < buildResource.Amount)
                     return;
 
-            foreach (var buildResource in buildingSite.RequiredResourcesPerTick)
-                buildingSite.SetResourceAmount(buildResource.ResourceId, buildingSite.GetResourceAmount(buildResource.ResourceId) - buildResource.Amount);
-
-            buildingSite.BuiltTicks++;
+            var building = buildingSite.SpawnBuilding(universe);
+            universe.RemoveUnit(buildingSite);
         }
     }
 }
