@@ -12,15 +12,17 @@ namespace Multiverse
     {
         private bool hasBeenDisposed;
 
-        public World World { get; }
+        public World World { get; init; }
 
-        public IRepository Repository { get; }
+        public IRepository Repository { get; init; }
 
-        public IDictionary<int, Resource> Resources { get; }
+        public IDictionary<int, Resource> Resources { get; init; }
 
-        public IDictionary<string, UnitType> UnitTypes { get; }
+        public IDictionary<string, UnitType> UnitTypes { get; init; }
 
-        protected ScriptingEngineFactory ScriptingEngineFactory { get; }
+        protected ScriptingEngineFactory ScriptingEngineFactory { get; init; }
+
+        protected Queue<Battle> Battles { get; init; }
 
         public Universe(IRepositoryFactoryFactory repositoryFactoryFactory, int worldId, IEnumerable<Resource> resources)
         {
@@ -39,9 +41,10 @@ namespace Multiverse
 
             Resources = new ReadOnlyDictionary<int, Resource>(resources.ToDictionary(x => x.Id));
             ScriptingEngineFactory = new ScriptingEngineFactory();
+            Battles = new Queue<Battle>();
         }
 
-        public void RemoveUnit(Unit unit)
+        public virtual void RemoveUnit(Unit unit)
         {
             Repository.Delete(unit);
         }
@@ -73,7 +76,7 @@ namespace Multiverse
             return (T)SpawnUnit(unitType, player, place);
         }
 
-        public Unit SpawnUnit(UnitType unitType, Player player, Place place)
+        public virtual Unit SpawnUnit(UnitType unitType, Player player, Place place)
         {
             var unit = CreateUnit(unitType, player, place);
             InitializeUnit(unit, player, place);
@@ -103,7 +106,7 @@ namespace Multiverse
             }
         }
 
-        public UnitAbilityUseResult UseAbility<T>(Unit unit, UnitAbilityUse use) where T : class, IUnitAbility
+        public virtual UnitAbilityUseResult UseAbility<T>(Unit unit, UnitAbilityUse use) where T : class, IUnitAbility
         {
             var ability = unit.Abilities.OfType<T>().FirstOrDefault();
             if (ability == null)
@@ -112,7 +115,7 @@ namespace Multiverse
             return UseAbility(unit, ability, use);
         }
 
-        public UnitAbilityUseResult UseAbility(Unit unit, string abilityName, UnitAbilityUse use)
+        public virtual UnitAbilityUseResult UseAbility(Unit unit, string abilityName, UnitAbilityUse use)
         {
             var ability = unit.Abilities.Where(x => x.Name == abilityName).FirstOrDefault();
             if (ability == null)
@@ -121,12 +124,21 @@ namespace Multiverse
             return UseAbility(unit, ability, use);
         }
 
-        protected UnitAbilityUseResult UseAbility(Unit unit, IUnitAbility ability, UnitAbilityUse use)
+        protected virtual UnitAbilityUseResult UseAbility(Unit unit, IUnitAbility ability, UnitAbilityUse use)
         {
+            if (unit.Dead)
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.UnitIsDead);
             if (ability.RemainingUses <= 0)
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.NoRemainingUses);
             if (unit.ActionPoints < ability.ActionPointCost)
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.NoRemainingUses);
+            if (unit.Dead)
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.NothingToDo);
+
+            if (!unit.InBattle && (ability is IUnitBattleAbility))
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.NotAvailableOutsideBattle);
+            if (unit.InBattle && !(ability is IUnitBattleAbility))
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.OnlyAvailableOutsideBattle);
 
             if (ability.CooldownTime != 0)
                 ability.RemainingUses--;
@@ -139,7 +151,9 @@ namespace Multiverse
         public virtual MoveUnitResult MoveUnit(Unit unit, Place place, int movementRequired)
         {
             if (unit.Immovable)
-                return new MoveUnitResult() { Type = MoveUnitResultType.Immovable };
+                return new MoveUnitResult() { Type = MoveUnitResultType.UnitIsImmovable };
+            if (unit.Dead)
+                return new MoveUnitResult() { Type = MoveUnitResultType.UnitIsDead };
 
             if (unit.MovementPoints < movementRequired)
                 return new MoveUnitResult() { Type = MoveUnitResultType.NotEnoughMovement };
@@ -152,6 +166,9 @@ namespace Multiverse
 
         public virtual TransferResourceResult TransferResource(Unit from, Unit to, Resource resource, int amount)
         {
+            if (from.Dead || to.Dead)
+                return new TransferResourceResult(TransferResourceResultType.CannotTransfer, 0, amount);
+
             if (amount <= 0)
                 return new TransferResourceResult(TransferResourceResultType.NothingToTransfer, 0, amount);
 
@@ -172,6 +189,9 @@ namespace Multiverse
 
             foreach (var unit in units)
             {
+                if (unit.Dead)
+                    continue;
+
                 var unitChanged = false;
 
                 if (unit.MovementPoints < unit.MaxMovementPoints)
@@ -188,13 +208,25 @@ namespace Multiverse
 
                 foreach (var ability in unit.Abilities)
                 {
-                    if (ability.RemainingUses < ability.MaxAvailableUses)
+                    if (ability is IUnitBattleAbility)
                     {
-                        if (ability.CooldownTime != 0 && ability.CooldownTimestamp <= worldTimestamp)
+                        if (ability.RemainingUses != 0 || ability.CooldownTimestamp != 0)
                         {
-                            ability.RemainingUses = Math.Min(ability.MaxAvailableUses, ability.RemainingUses + ability.UsesRestoredOnCooldown);
-                            ability.CooldownTimestamp = worldTimestamp + ability.CooldownTime;
+                            ability.RemainingUses = 0;
+                            ability.CooldownTimestamp = 0;
                             unitChanged = true;
+                        }
+                    }
+                    else
+                    {
+                        if (ability.RemainingUses < ability.MaxAvailableUses)
+                        {
+                            if (ability.CooldownTime != 0 && ability.CooldownTimestamp <= worldTimestamp)
+                            {
+                                ability.RemainingUses = Math.Min(ability.MaxAvailableUses, ability.RemainingUses + ability.UsesRestoredOnCooldown);
+                                ability.CooldownTimestamp = worldTimestamp + ability.CooldownTime;
+                                unitChanged = true;
+                            }
                         }
                     }
                 }
@@ -262,22 +294,19 @@ namespace Multiverse
             var tickEvent = new Event(this, World.Timestamp, EventType.Tick);
 
             BatchRunEventScriptForAllUnits(tickEvent);
+
+            ResolveAllBattles();
         }
 
         public virtual void EnsureInitialWorldState()
         {
         }
 
-        public ScanAroundResult ScanAroundUnit(Guid id)
+        public virtual ScanAroundResult ScanAround(Unit self)
         {
-            var unit = Repository.GetUnit(id);
-            if (unit == null)
+            if (self.Dead)
                 return new ScanAroundResult(new List<ScriptingUnit>());
-            return ScanAround(unit);
-        }
 
-        public ScanAroundResult ScanAround(Unit self)
-        {
             var scanCapability = self.ScanCapability;
             var placesInRange = scanCapability.GetRange(self.Place).ToList();
             if (placesInRange.Count == 0)
@@ -296,6 +325,150 @@ namespace Multiverse
             }
 
             return new ScanAroundResult(scannedUnits);
+        }
+
+        public virtual ScriptingUnit? ScanUnit(Unit self, Unit target)
+        {
+            if (self.Dead)
+                return null;
+
+            var scanCapability = self.ScanCapability;
+            var placesInRange = scanCapability.GetRange(self.Place).ToList();
+            if (placesInRange.Count == 0)
+                return null;
+            if (!placesInRange.Contains(target.Place))
+                return null;
+
+            return scanCapability.Scan(self, target);
+        }
+
+        public virtual UnitAbilityUseResult StartBattle(Unit initiator, Unit target)
+        {
+            if (target.Player == null)
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.InvalidTargetUnit);
+            if (initiator.Player == null)
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.InvalidTargetUnit);
+            if (target.Player.Id == initiator.Player.Id) // cannot target own units, also units cannot target themselves
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.InvalidTargetUnit);
+            if (initiator.Dead || target.Dead)
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.InvalidTargetUnit);
+
+            Battles.Enqueue(new Battle(initiator, target));
+
+            return new UnitAbilityUseResult(UnitAbilityUseResultType.Success);
+        }
+
+        protected virtual void ResolveAllBattles()
+        {
+            while (Battles.TryDequeue(out var battle))
+            {
+                ResolveBattle(battle);
+            }
+        }
+
+        protected virtual void ResolveBattle(Battle battle)
+        {
+            var participantQueue = new Queue<Unit>(battle.Participants);
+            var unitScripts = new Dictionary<Guid, IScriptingEngine>();
+            ScriptingUnit[] scriptingParticipants;
+            ScriptingBattle scriptingBattle;
+
+            void AddParticipant(Unit unit)
+            {
+                if (battle.Participants.Contains(unit))
+                    return;
+                if (unit.Dead)
+                    return;
+                battle.Participants.Add(unit);
+                if (participantQueue != null)
+                    participantQueue.Enqueue(unit);
+                var scriptingEngine = unit.Script == null ? new DummyScriptingEngine() : ScriptingEngineFactory.Create(unit.Script);
+                unitScripts.Add(unit.Id, scriptingEngine);
+                // unit.ActionPoints = 0; // drain all actions points, this should prevent use of all non-battle abilities
+                unit.InBattle = true;
+            }
+
+            AddParticipant(battle.Initiator);
+            AddParticipant(battle.Target);
+
+            //TODO Limit number of participants.
+
+            // Battle start
+            var scriptingBattleStartEvent = new ScriptingBattleStartEvent(scriptingUnit =>
+            {
+                var newParticipant = Repository.GetUnit(scriptingUnit.idguid);
+                if (newParticipant == null)
+                    return UnitAbilityUseResultType.InvalidTargetUnit.ToString();
+                AddParticipant(newParticipant);
+                return UnitAbilityUseResultType.Success.ToString();
+            });
+
+            while (participantQueue.TryDequeue(out var participant))
+            {
+                if (!participant.Dead)
+                {
+                    scriptingParticipants = battle.Participants.Select(x => new ScriptingUnit(x, false, false, false, false)).ToArray();
+                    scriptingBattle = new ScriptingBattle(scriptingParticipants);
+                    unitScripts[participant.Id].RunBattleEvent(BattleEventType.Start, scriptingBattleStartEvent, participant, scriptingBattle);
+                }
+            }
+
+            // Battle round
+
+            scriptingParticipants = battle.Participants.Select(x => new ScriptingUnit(x, false, false, false, false)).ToArray(); // all participants are added, fixing the list
+            scriptingBattle = new ScriptingBattle(scriptingParticipants);
+            var aliveParticipantCountByPlayerId = new Dictionary<int, int>();
+
+            for (var round = 1; round <= battle.MaxRounds; round++)
+            {
+                aliveParticipantCountByPlayerId.Clear();
+
+                var battleRound = new ScriptingBattleRoundEvent(round);
+
+                foreach (var participant in battle.Participants)
+                {
+                    if (!participant.Dead)
+                    {
+                        if (participant.Player != null)
+                        {
+                            aliveParticipantCountByPlayerId.TryGetValue(participant.Player.Id, out var aliveParticipantCounts);
+                            aliveParticipantCountByPlayerId[participant.Player.Id] = 1 + aliveParticipantCounts;
+                        }
+
+                        participant.ActionPoints = participant.MaxActionPoints;
+                        foreach (var ability in participant.Abilities)
+                            if (ability is IUnitBattleAbility)
+                                ability.RemainingUses = ability.MaxAvailableUses;
+
+                        unitScripts[participant.Id].RunBattleEvent(BattleEventType.Round, battleRound, participant, scriptingBattle);
+                    }
+                }
+
+                if (aliveParticipantCountByPlayerId.Values.Where(x => x > 0).Count() <= 1) // only one player or no players remain alive, end of battle
+                {
+                    break;
+                }
+            }
+
+            // Battle end
+
+            var scriptingBattleEndEvent = new ScriptingBattleEndEvent();
+
+            foreach (var participant in battle.Participants)
+            {
+                if (!participant.Dead)
+                {
+                    unitScripts[participant.Id].RunBattleEvent(BattleEventType.End, scriptingBattleEndEvent, participant, scriptingBattle);
+                }
+                foreach (var ability in participant.Abilities)
+                    if (ability is IUnitBattleAbility)
+                        ability.RemainingUses = 0;
+                participant.InBattle = false;
+                Repository.Save(participant);
+            }
+
+            foreach (var scriptingEngine in unitScripts.Values)
+                scriptingEngine.Dispose();
         }
     }
 }

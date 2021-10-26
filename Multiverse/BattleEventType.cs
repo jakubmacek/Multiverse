@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
-    public enum ScriptingRunEventResultType
+    public enum BattleEventType
     {
-        Success = 0,
-        ScriptError = 1,
-        EventError = 2,
-        MissingEventHandler = 3,
+        Start = 1,
+        Round = 2,
+        End = 3,
     }
 }

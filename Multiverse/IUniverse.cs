@@ -27,12 +27,14 @@ namespace Multiverse
 
         UnitAbilityUseResult UseAbility(Unit unit, string abilityName, UnitAbilityUse use);
 
-        ScanAroundResult ScanAroundUnit(Guid id);
-
         ScanAroundResult ScanAround(Unit unit);
+
+        ScriptingUnit? ScanUnit(Unit unit, Unit target);
 
         void EnsureInitialWorldState();
 
         void RemoveUnit(Unit unit);
+
+        UnitAbilityUseResult StartBattle(Unit initiator, Unit target);
     }
 }

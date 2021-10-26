@@ -38,6 +38,8 @@ namespace Multiverse
 
         public abstract int MaxActionPoints { get; }
 
+        public virtual bool InBattle { get; set; }
+
         public abstract IScanCapability ScanCapability { get; }
 
         public virtual Dictionary<int, int> Resources { get; set; } = new Dictionary<int, int>();

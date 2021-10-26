@@ -21,5 +21,8 @@ namespace Multiverse
         InvalidResource = 10,
         NotEnoughCapacity = 11,
         InvalidUnitType = 12,
+        NotAvailableOutsideBattle = 13,
+        OnlyAvailableOutsideBattle = 14,
+        UnitIsDead = 15,
     }
 }

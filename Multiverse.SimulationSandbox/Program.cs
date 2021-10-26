@@ -30,7 +30,9 @@ namespace Multiverse.SimulationSandbox
 
             var gaia = repository.GetPlayer(SimpleUniverse.SimpleUniverse.GaiaPlayerId) ?? throw new ArgumentNullException("gaia");
             var player1 = new Player() { Id = 1, Name = "PlayerOne" };
+            var player2 = new Player() { Id = 2, Name = "PlayerTwo" };
             repository.Save(player1);
+            repository.Save(player2);
             var settlerScript = new Script()
             {
                 Id = Guid.NewGuid(),
@@ -41,16 +43,38 @@ namespace Multiverse.SimulationSandbox
                 Type = ScriptEngineType.JavaScript,
                 Source = System.IO.File.ReadAllText("../../../SettlerScript.js"),
             };
+            var warriorScript = new Script()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Warrior AI",
+                Player = player1,
+                Type = ScriptEngineType.JavaScript,
+                Source = System.IO.File.ReadAllText("../../../WarriorScript.js"),
+            };
             repository.Save(settlerScript);
-            var place_0_0 = new Place(0, 0);
-            var place_1_0 = new Place(1, 0);
+            repository.Save(warriorScript);
+            //var place_0_0 = new Place(0, 0);
+            //var place_1_0 = new Place(1, 0);
+            var place_2_0 = new Place(2, 0);
 
-            var forest1 = universe.SpawnUnit<Forest>(gaia, place_1_0);
-            forest1.SetResourceAmount(R.Wood.Id, 5000);
+            //var forest1 = universe.SpawnUnit<Forest>(gaia, place_1_0);
+            //forest1.SetResourceAmount(R.Wood.Id, 5000);
 
-            var settler1 = universe.SpawnUnit<Settler>(player1, place_0_0);
-            settler1.Script = settlerScript;
-            repository.Save(settler1);
+            //var settler1 = universe.SpawnUnit<Settler>(player1, place_0_0);
+            //settler1.Script = settlerScript;
+            //repository.Save(settler1);
+
+            var warrior1_1 = universe.SpawnUnit<Warrior>(player1, place_2_0);
+            warrior1_1.Script = warriorScript;
+            warrior1_1.Name = "Warrior 1_1";
+            repository.Save(warrior1_1);
+
+            var warrior2_1 = universe.SpawnUnit<Warrior>(player2, place_2_0);
+            warrior2_1.Name = "Warrior 2_1";
+            repository.Save(warrior2_1);
+            var warrior2_2 = universe.SpawnUnit<Warrior>(player2, place_2_0);
+            warrior2_2.Name = "Warrior 2_2";
+            repository.Save(warrior2_2);
         }
 
         private static void RunUniverse(string filePath, int howManyTicks, Action<IUniverse> initialState)

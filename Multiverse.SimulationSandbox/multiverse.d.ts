@@ -50,6 +50,7 @@ interface UnitAbilities {
 interface Unit {
     id: string;
     type: string;
+    playerId: number;
     name: string;
     x: number;
     y: number;
@@ -72,6 +73,7 @@ interface UnitSelf extends Unit {
 
 declare const scanning: {
     scanAround(self: UnitSelf): Unit[];
+    scanUnit(self: UnitSelf, target: Unit): Unit;
 }
 
 interface UnitAbilityUseResult {
@@ -87,4 +89,31 @@ declare const abilities: {
     startBuildingSite(self: UnitSelf, buildingSiteName: string): UnitAbilityUseResult;
     build(self: UnitSelf, targetBuildingSite: Unit): UnitAbilityUseResult;
     transferResource(self: UnitSelf, target: Unit, resourceId: number, amount: number): UnitAbilityUseResult;
+}
+
+declare const battle: {
+    start(self: UnitSelf, target: Unit): UnitAbilityUseResult;
+}
+
+interface UnitBattleAbility extends UnitAbility {
+
+}
+
+interface Battle {
+    participants: Unit[];
+}
+
+interface BattleEvent {
+    type: string;
+}
+
+interface BattleStartEvent extends BattleEvent {
+    addParticipant(unit: Unit): string;
+}
+
+interface BattleRoundEvent extends BattleEvent {
+    round: number;
+}
+
+interface BattleEndEvent extends BattleEvent {
 }

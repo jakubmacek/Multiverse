@@ -13,8 +13,10 @@ namespace Multiverse
         private readonly bool _seeHealthAndMovement;
 
         public Guid idguid => _unit.Id;
-        
+
         public string id => _unit.Id.ToString();
+
+        public int playerId => _unit.Player != null ? _unit.Player.Id : 0;
 
         public string type => _unit.GetType().Name;
 

@@ -9,7 +9,8 @@ namespace Multiverse
     public enum MoveUnitResultType
     {
         Moved = 0,
-        Immovable = 1,
+        UnitIsImmovable = 1,
         NotEnoughMovement = 2,
+        UnitIsDead = 3,
     }
 }

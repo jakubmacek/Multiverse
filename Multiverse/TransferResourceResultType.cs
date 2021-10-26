@@ -13,5 +13,6 @@ namespace Multiverse
         OverCapacity = 2,
         NoCapacity = 3,
         NothingToTransfer = 4,
+        CannotTransfer = 5,
     }
 }

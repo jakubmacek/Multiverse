@@ -23,8 +23,12 @@ namespace Multiverse.SimpleUniverse
         public ScriptingUnit Scan(IUnit scanner, IUnit scanned)
         {
             if (scanned.Player != null && scanner.Player != null)
+            {
                 if (scanned.Player.Id == SimpleUniverse.GaiaPlayerId || scanned.Player.Id == scanner.Player.Id)
                     return new ScriptingUnit(scanned, true, true, true, true);
+                else
+                    return new ScriptingUnit(scanned, true, false, false, false);
+            }
             return new ScriptingUnit(scanned, false, false, false, false);
         }
     }

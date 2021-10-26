@@ -9,44 +9,18 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
-    public class JintScriptingEngine : IScriptingEngine
+    public class JintScriptingEngine : ScriptingEngine
     {
-        public IScript Script { get; init; }
-
         private readonly Engine engine;
 
-        private bool hasBeenDisposed;
-
-        private string? errorMessage;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!hasBeenDisposed)
-            {
-                if (disposing)
-                {
-                    // nothing
-                }
-
-                hasBeenDisposed = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        public void RegisterObject(string name, object obj)
+        public override void RegisterObject(string name, object obj)
         {
             engine.SetValue(name, obj);
         }
 
         public JintScriptingEngine(IScript script, IEnumerable<IScriptingLibrary> libraries)
+            : base(script)
         {
-            Script = script;
-
             engine = new Engine(options =>
             {
                 options.Culture = new System.Globalization.CultureInfo("cs-CZ");
@@ -80,25 +54,22 @@ namespace Multiverse
             }
         }
 
-        public ScriptingRunEventResult RunEvent(Event @event, IUnit unit)
+        public override ScriptingRunEventResult RunFunction(string functionName, params object[] parameters)
         {
-            if (errorMessage != null)
-                return new ScriptingRunEventResult(ScriptingRunEventResultType.ScriptError, errorMessage);
-
             try
             {
-                var oneventValue = engine.GetValue("onevent");
+                var oneventValue = engine.GetValue(functionName);
                 var oneventFunction = oneventValue as ScriptFunctionInstance;
                 if (oneventFunction == null)
-                    return new ScriptingRunEventResult(ScriptingRunEventResultType.MissingOnEventHandler, null);
+                    return new ScriptingRunEventResult(ScriptingRunEventResultType.MissingEventHandler, null);
 
-                var self = new ScriptingUnitSelf(unit);
-                var ev = new ScriptingEvent(@event.Timestamp, @event.Type);
+                var pars = new JsValue[parameters.Length];
+                for (int i = 0; i < parameters.Length; i++)
+                    pars[i] = JsValue.FromObject(engine, parameters[i]);
 
-                var result = oneventFunction.Call(null, new[] { JsValue.FromObject(engine, self), JsValue.FromObject(engine, ev) });
-                var resultString = result.IsString() ? result.AsString() : null;
+                var result = oneventFunction.Call(null, pars);
 
-                return new ScriptingRunEventResult(ScriptingRunEventResultType.Success, resultString);
+                return new ScriptingRunEventResult(ScriptingRunEventResultType.Success, result.IsString() ? result.AsString() : null);
             }
             catch (Exception ex)
             {

@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
-    public enum ScriptingRunEventResultType
+    public interface IUnitBattleAbility : IUnitAbility
     {
-        Success = 0,
-        ScriptError = 1,
-        EventError = 2,
-        MissingEventHandler = 3,
     }
 }

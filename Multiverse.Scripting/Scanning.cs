@@ -20,19 +20,36 @@ namespace Multiverse.Scripting
             engine.RegisterObject("scanning", new Implementation
             {
                 scanAround = ScanAround,
-                //filterByType = FilterByType,
+                scanUnit = ScanUnit,
             });
         }
 
         class Implementation
         {
             public Func<ScriptingUnitSelf, ScriptingUnit[]>? scanAround;
+            public Func<ScriptingUnitSelf, ScriptingUnit, ScriptingUnit>? scanUnit;
             //public Func<string, List<ScriptingUnit>, List<ScriptingUnit>>? filterByType;
         }
 
         public ScriptingUnit[] ScanAround(ScriptingUnitSelf self)
         {
-            return _universe.ScanAroundUnit(self.idguid).Units.ToArray();
+            var unit = _universe.Repository.GetUnit(self.idguid);
+            if (unit == null)
+                return new ScriptingUnit[0];
+
+            return _universe.ScanAround(unit).Units.ToArray();
+        }
+
+        public ScriptingUnit ScanUnit(ScriptingUnitSelf self, ScriptingUnit target)
+        {
+            var unit = _universe.Repository.GetUnit(self.idguid);
+            if (unit == null)
+                return target;
+            var targetUnit = _universe.Repository.GetUnit(target.idguid);
+            if (targetUnit == null)
+                return target;
+
+            return _universe.ScanUnit(unit, targetUnit) ?? target;
         }
     }
 }

@@ -17,12 +17,14 @@ namespace Multiverse.SimpleUniverse
             ScriptingEngineFactory.AddLibrary(new Scripting.Debugging(this));
             ScriptingEngineFactory.AddLibrary(new Scripting.Scanning(this));
             ScriptingEngineFactory.AddLibrary(new Scripting.Abilities(this));
+            ScriptingEngineFactory.AddLibrary(new Scripting.Battle(this));
         }
 
         protected override void EnumerateUnits(IUnitTypeVisitor v)
         {
             v.Visit<Forest>();
             v.Visit<Settler>();
+            v.Visit<Warrior>();
             v.Visit<Warehouse>();
             v.Visit<WarehouseBuildingSite>();
         }

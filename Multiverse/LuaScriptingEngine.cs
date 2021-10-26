@@ -7,44 +7,27 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
-    public class LuaScriptingEngine : IScriptingEngine
+    public class LuaScriptingEngine : ScriptingEngine
     {
-        public IScript Script { get; init; }
-
         private readonly Lua lua;
 
-        private bool hasBeenDisposed;
-
-        private string? errorMessage;
-
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
-            if (!hasBeenDisposed)
+            if (disposing)
             {
-                if (disposing)
-                {
-                    lua.Dispose();
-                }
-
-                hasBeenDisposed = true;
+                lua.Dispose();
             }
+            base.Dispose(true);
         }
 
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        public void RegisterObject(string name, object obj)
+        public override void RegisterObject(string name, object obj)
         {
             lua[name] = obj;
         }
 
         public LuaScriptingEngine(IScript script, IEnumerable<IScriptingLibrary> libraries)
+            : base(script)
         {
-            Script = script;
-
             lua = new Lua();
 
             lua.State.Encoding = Encoding.UTF8;
@@ -105,22 +88,16 @@ namespace Multiverse
             }
         }
 
-        public ScriptingRunEventResult RunEvent(Event @event, IUnit unit)
+        public override ScriptingRunEventResult RunFunction(string functionName, params object[] parameters)
         {
-            if (errorMessage != null)
-                return new ScriptingRunEventResult(ScriptingRunEventResultType.ScriptError, errorMessage);
-
             try
             {
-                var oneventValue = lua["onevent"];
+                var oneventValue = lua[functionName];
                 var oneventFunction = oneventValue as LuaFunction;
                 if (oneventFunction == null)
-                    return new ScriptingRunEventResult(ScriptingRunEventResultType.MissingOnEventHandler, null);
+                    return new ScriptingRunEventResult(ScriptingRunEventResultType.MissingEventHandler, null);
 
-                var self = new ScriptingUnitSelf(unit);
-                var ev = new ScriptingEvent(@event.Timestamp, @event.Type);
-
-                var result = oneventFunction.Call(self, ev);
+                var result = oneventFunction.Call(parameters);
 
                 oneventFunction.Dispose();
 
