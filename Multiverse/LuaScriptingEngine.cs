@@ -49,12 +49,33 @@ namespace Multiverse
 
             lua.State.Encoding = Encoding.UTF8;
 
+            foreach (var library in libraries)
+                library.Register(this);
+
+            lua.DoString(@"
+                function setlimit()
+                    local debug = debug
+                        debug.sethook(
+                        function()
+                            debug.sethook()
+                            error('Script run time exceeded')
+                        end
+                    , '', 10000);
+                end
+                setlimit()
+                setlimit = nil
+            ");
+
             // Sandbox
             lua.DoString(@"
 		        require = function () end
 		        import = function () end
 		        dofile = function () end
 		        loadfile = function () end
+		        loadstring = function () end
+		        setfenv = function () end
+		        setmetatable = function () end
+		        collectgarbage = function () end
 		        os.execute = function () end
 		        os.exit = function () end
 		        os.getenv = function () end
@@ -62,18 +83,17 @@ namespace Multiverse
 		        os.rename = function () end
 		        os.setlocale = function () end
 		        os.tmpname = function () end
+                module = nil
                 coroutine = nil
                 package = nil
                 io = nil
                 debug = nil
+                newproxy = nil
 
                 -- print = function () end
 	        ", "sandboxing");
 
             //TODO Implementovat mechanismus, kterym jde vkladat jine skripty? Musel by tu byt pristup k databazi, nebo si to prednacist jinak.
-
-            foreach (var library in libraries)
-                library.Register(this);
 
             try
             {
@@ -83,8 +103,6 @@ namespace Multiverse
             {
                 errorMessage = ex.Message;
             }
-
-            //TODO Omezit nejak delku behu pocatecni inicializace i volani funkce.
         }
 
         public ScriptingRunEventResult RunEvent(Event @event, IUnit unit)
