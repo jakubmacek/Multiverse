@@ -284,9 +284,8 @@ namespace Multiverse
                 return new ScanAroundResult(new List<ScriptingUnit>());
 
             var query = Repository.Units;
-            //TODO omezit lepe vzdalenost dohledu - query = query.Where(x => x.Place.X ...)
+            query = query.UnitIsInPlace(placesInRange);
             var units = query.ToList();
-            units = units.Where(x => placesInRange.Any(y => y.Equals(x.Place))).ToList();
 
             var scannedUnits = new List<ScriptingUnit>();
             foreach (var unit in units)

@@ -14,7 +14,7 @@ namespace Multiverse.Persistence.NHibernate
 
             Discriminator(d =>
             {
-                d.Force(true);
+                //d.Force(true); // This will add discriminator into all SELECT queries.
                 d.Insert(true);
                 d.Length(200);
                 d.NotNullable(true);

@@ -17,14 +17,14 @@ namespace Multiverse.Persistence.NHibernate
         {
         }
 
-        public override string GetSubclassForDiscriminatorValue(object value)
-        {
-            return base.GetSubclassForDiscriminatorValue(value);
-        }
+        //public override string GetSubclassForDiscriminatorValue(object value)
+        //{
+        //    return base.GetSubclassForDiscriminatorValue(value);
+        //}
 
-        public override object Instantiate(object id)
-        {
-            return base.Instantiate(id);
-        }
+        //public override object Instantiate(object id)
+        //{
+        //    return base.Instantiate(id);
+        //}
     }
 }

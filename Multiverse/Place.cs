@@ -42,7 +42,7 @@ namespace Multiverse
 
         public override string ToString()
         {
-            return $"Point({X}, {Y})";
+            return $"Place({X}, {Y})";
         }
     }
 }
