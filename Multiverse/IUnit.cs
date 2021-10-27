@@ -33,7 +33,7 @@ namespace Multiverse
 
         int MaxActionPoints { get; }
 
-        bool InBattle { get; set; }
+        Battle? InBattle { get; set; }
 
         Script? Script { get; set; }
 

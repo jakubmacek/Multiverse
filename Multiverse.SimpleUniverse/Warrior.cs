@@ -6,7 +6,7 @@ namespace Multiverse.SimpleUniverse
     {
         public override bool Indestructible => false;
 
-        public override int MaxHealth => 200;
+        public override int MaxHealth => 100;
 
         public override bool Immovable => false;
 

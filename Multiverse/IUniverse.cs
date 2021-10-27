@@ -36,5 +36,7 @@ namespace Multiverse
         void RemoveUnit(Unit unit);
 
         UnitAbilityUseResult StartBattle(Unit initiator, Unit target);
+
+        ISoundEffects SoundEffects { get; set; }
     }
 }

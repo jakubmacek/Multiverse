@@ -38,7 +38,7 @@ namespace Multiverse
 
         public abstract int MaxActionPoints { get; }
 
-        public virtual bool InBattle { get; set; }
+        public virtual Battle? InBattle { get; set; }
 
         public abstract IScanCapability ScanCapability { get; }
 

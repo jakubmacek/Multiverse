@@ -24,8 +24,12 @@ namespace Multiverse
 
         protected Queue<Battle> Battles { get; init; }
 
+        public ISoundEffects SoundEffects { get; set; }
+
         public Universe(IRepositoryFactoryFactory repositoryFactoryFactory, int worldId, IEnumerable<Resource> resources)
         {
+            SoundEffects = new SoundEffects();
+
             UnitTypes = new Dictionary<string, UnitType>();
             var unitVisitor = new RegisterUnitIntoDictionaryVisitor(this, UnitTypes);
             EnumerateUnits(unitVisitor);
@@ -135,9 +139,9 @@ namespace Multiverse
             if (unit.Dead)
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.NothingToDo);
 
-            if (!unit.InBattle && (ability is IUnitBattleAbility))
+            if (unit.InBattle == null && (ability is IUnitBattleAbility))
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.NotAvailableOutsideBattle);
-            if (unit.InBattle && !(ability is IUnitBattleAbility))
+            if (unit.InBattle != null && !(ability is IUnitBattleAbility))
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.OnlyAvailableOutsideBattle);
 
             if (ability.CooldownTime != 0)
@@ -373,25 +377,31 @@ namespace Multiverse
             ScriptingUnit[] scriptingParticipants;
             ScriptingBattle scriptingBattle;
 
-            void AddParticipant(Unit unit)
+            UnitAbilityUseResultType AddParticipant(Unit unit)
             {
+                if (battle.Participants.Count >= battle.MaxParticipants)
+                    return UnitAbilityUseResultType.NotEnoughCapacity;
                 if (battle.Participants.Contains(unit))
-                    return;
+                    return UnitAbilityUseResultType.Success;
                 if (unit.Dead)
-                    return;
+                    return UnitAbilityUseResultType.UnitIsDead;
+                if (unit.Player == null)
+                    return UnitAbilityUseResultType.InvalidTargetUnit;
+                var participantCountOfPlayer = battle.Participants.Count(x => x.Player != null && x.Player.Equals(unit.Player));
+                if (participantCountOfPlayer >= battle.MaxParticipantsPerPlayer)
+                    return UnitAbilityUseResultType.NotEnoughCapacity;
                 battle.Participants.Add(unit);
                 if (participantQueue != null)
                     participantQueue.Enqueue(unit);
                 var scriptingEngine = unit.Script == null ? new DummyScriptingEngine() : ScriptingEngineFactory.Create(unit.Script);
                 unitScripts.Add(unit.Id, scriptingEngine);
                 // unit.ActionPoints = 0; // drain all actions points, this should prevent use of all non-battle abilities
-                unit.InBattle = true;
+                unit.InBattle = battle;
+                return UnitAbilityUseResultType.Success;
             }
 
             AddParticipant(battle.Initiator);
             AddParticipant(battle.Target);
-
-            //TODO Limit number of participants.
 
             // Battle start
             var scriptingBattleStartEvent = new ScriptingBattleStartEvent(scriptingUnit =>
@@ -399,8 +409,7 @@ namespace Multiverse
                 var newParticipant = Repository.GetUnit(scriptingUnit.idguid);
                 if (newParticipant == null)
                     return UnitAbilityUseResultType.InvalidTargetUnit.ToString();
-                AddParticipant(newParticipant);
-                return UnitAbilityUseResultType.Success.ToString();
+                return AddParticipant(newParticipant).ToString();
             });
 
             while (participantQueue.TryDequeue(out var participant))
@@ -463,7 +472,7 @@ namespace Multiverse
                 foreach (var ability in participant.Abilities)
                     if (ability is IUnitBattleAbility)
                         ability.RemainingUses = 0;
-                participant.InBattle = false;
+                participant.InBattle = null;
                 Repository.Save(participant);
             }
 

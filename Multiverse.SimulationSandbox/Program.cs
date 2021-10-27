@@ -83,6 +83,11 @@ namespace Multiverse.SimulationSandbox
             {
                 using (var universe = new SimpleUniverseFactory().Create(repositoryFactoryFactory, 1))
                 {
+                    //var soundEffects = new SoundEffects();
+                    //soundEffects["WarriorAttack"] = new FileSoundEffect(@"..\..\..\547600__saviraz__sword-attack.wav");
+                    //soundEffects["Death"] = new FileSoundEffect(@"..\..\..\173126__replix__death-sound-male.wav");
+                    //universe.SoundEffects = soundEffects;
+
                     universe.EnsureInitialWorldState();
 
                     initialState(universe);

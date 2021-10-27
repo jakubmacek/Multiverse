@@ -12,6 +12,8 @@ namespace Multiverse
         public Unit Target { get; init; }
         public ISet<Unit> Participants { get; init; } = new HashSet<Unit>();
         public int MaxRounds { get; init; }
+        public int MaxParticipantsPerPlayer { get; init; } = 20;
+        public int MaxParticipants { get; init; } = 100;
 
         public Battle(Unit initiator, Unit target, int maxRounds = 100)
         {

@@ -28,13 +28,18 @@ namespace Multiverse.SimpleUniverse
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.InvalidTargetUnit);
             if (use.TargetUnit.Place != unit.Place)
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.TargetUnitIsTooFar);
-            if (!use.TargetUnit.InBattle) // TODO zkontrolovat
+            if (use.TargetUnit.InBattle == null)
+                return new UnitAbilityUseResult(UnitAbilityUseResultType.InvalidTargetUnit);
+            if (!ReferenceEquals(use.TargetUnit.InBattle, unit.InBattle))
                 return new UnitAbilityUseResult(UnitAbilityUseResultType.InvalidTargetUnit);
 
+            universe.SoundEffects["WarriorAttack"].Play();
             var damage = 25;
             //TODO defense/resistance
             damage = Math.Min(use.TargetUnit.Health, damage);
             use.TargetUnit.Health = use.TargetUnit.Health - damage;
+            if (use.TargetUnit.Dead)
+                universe.SoundEffects["Death"].Play();
             return new UnitAbilityUseResult(UnitAbilityUseResultType.Success, damage);
         }
     }
