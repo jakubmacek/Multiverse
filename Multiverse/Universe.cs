@@ -372,6 +372,9 @@ namespace Multiverse
 
         protected virtual void ResolveBattle(Battle battle)
         {
+            if (battle.Initiator.Dead || battle.Target.Dead)
+                return;
+
             var participantQueue = new Queue<Unit>(battle.Participants);
             var unitScripts = new Dictionary<Guid, IScriptingEngine>();
             ScriptingUnit[] scriptingParticipants;

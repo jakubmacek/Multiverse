@@ -70,9 +70,11 @@ namespace Multiverse.SimulationSandbox
             repository.Save(warrior1_1);
 
             var warrior2_1 = universe.SpawnUnit<Warrior>(player2, place_2_0);
+            warrior2_1.Script = warriorScript;
             warrior2_1.Name = "Warrior 2_1";
             repository.Save(warrior2_1);
             var warrior2_2 = universe.SpawnUnit<Warrior>(player2, place_2_0);
+            warrior2_2.Script = warriorScript;
             warrior2_2.Name = "Warrior 2_2";
             repository.Save(warrior2_2);
         }
