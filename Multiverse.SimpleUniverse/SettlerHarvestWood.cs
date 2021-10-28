@@ -12,7 +12,7 @@ namespace Multiverse.SimpleUniverse
 
         public override int MaxAvailableUses => 5;
 
-        public override ulong CooldownTime => 1;
+        public override long CooldownTime => 1;
 
         public override int HarvestedOnUse => 10;
 

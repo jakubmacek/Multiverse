@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Multiverse.SimpleUniverse
 {
+    [UniverseRegistration(typeof(SimpleUniverse), typeof(SimpleUniverseFactory))]
     public sealed class SimpleUniverse : Universe
     {
         public static readonly int GaiaPlayerId = 0;

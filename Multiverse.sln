@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiverse.SimpleUniverse",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiverse.Scripting", "Multiverse.Scripting\Multiverse.Scripting.csproj", "{9D7B7BFF-2560-4627-9B9E-194511466188}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multiverse.Persistence.NHibernate", "Multiverse.Persistence.NHibernate\Multiverse.Persistence.NHibernate.csproj", "{3854542A-E0BE-43CA-88B1-F7A58483F782}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiverse.Persistence.NHibernate", "Multiverse.Persistence.NHibernate\Multiverse.Persistence.NHibernate.csproj", "{3854542A-E0BE-43CA-88B1-F7A58483F782}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multiverse.Server", "Multiverse.Server\Multiverse.Server.csproj", "{E9816B92-4B0E-4602-B6C7-F98016423487}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{3854542A-E0BE-43CA-88B1-F7A58483F782}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3854542A-E0BE-43CA-88B1-F7A58483F782}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3854542A-E0BE-43CA-88B1-F7A58483F782}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9816B92-4B0E-4602-B6C7-F98016423487}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9816B92-4B0E-4602-B6C7-F98016423487}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9816B92-4B0E-4602-B6C7-F98016423487}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9816B92-4B0E-4602-B6C7-F98016423487}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

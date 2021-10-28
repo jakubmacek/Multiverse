@@ -4,9 +4,9 @@
     {
         string Name { get; }
 
-        ulong CooldownTime { get; }
+        long CooldownTime { get; }
 
-        ulong CooldownTimestamp { get; set; }
+        long CooldownTimestamp { get; set; }
 
         int MaxAvailableUses { get; }
 

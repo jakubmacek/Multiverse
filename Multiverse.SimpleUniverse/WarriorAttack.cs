@@ -14,7 +14,7 @@ namespace Multiverse.SimpleUniverse
 
         public override int MaxAvailableUses => 1;
 
-        public override ulong CooldownTime => 1;
+        public override long CooldownTime => 1;
 
         public override UnitAbilityType Type => UnitAbilityType.Attack;
 

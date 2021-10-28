@@ -18,7 +18,7 @@ namespace Multiverse.SimpleUniverse
 
         public override int UsesRestoredOnCooldown => 1;
 
-        public override ulong CooldownTime => 0;
+        public override long CooldownTime => 0;
 
         public override int ActionPointCost => 30;
 

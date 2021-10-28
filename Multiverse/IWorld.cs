@@ -6,6 +6,6 @@
 
         string Universe { get; set; }
 
-        ulong Timestamp { get; set; }
+        long Timestamp { get; set; }
     }
 }

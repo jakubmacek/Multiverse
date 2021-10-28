@@ -18,7 +18,7 @@ namespace Multiverse
         public abstract int MaxAvailableUses { get; }
 
         [Newtonsoft.Json.JsonIgnore]
-        public abstract ulong CooldownTime { get; }
+        public abstract long CooldownTime { get; }
 
         [Newtonsoft.Json.JsonIgnore]
         public abstract UnitAbilityType Type { get; }
@@ -28,7 +28,7 @@ namespace Multiverse
 
         public virtual int RemainingUses { get; set; }
 
-        public virtual ulong CooldownTimestamp { get; set; }
+        public virtual long CooldownTimestamp { get; set; }
 
         public abstract UnitAbilityUseResult Use(Universe universe, Unit unit, UnitAbilityUse use);
     }

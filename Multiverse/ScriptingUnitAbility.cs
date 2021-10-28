@@ -14,9 +14,9 @@ namespace Multiverse
 
         public int type => (int)_ability.Type;
 
-        public ulong cooldownTime => _ability.CooldownTime;
+        public long cooldownTime => _ability.CooldownTime;
 
-        public ulong cooldownTimestamp => _ability.CooldownTimestamp;
+        public long cooldownTimestamp => _ability.CooldownTimestamp;
 
         public int maxAvailableUses => _ability.MaxAvailableUses;
 

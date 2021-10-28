@@ -290,16 +290,19 @@ namespace Multiverse
 
         public virtual void Tick()
         {
-            CooldownForAllAbilities(Repository.Units);
+            lock (this)
+            {
+                CooldownForAllAbilities(Repository.Units);
 
-            World.Timestamp++;
-            Repository.SaveWorld();
+                World.Timestamp++;
+                Repository.SaveWorld();
 
-            var tickEvent = new Event(this, World.Timestamp, EventType.Tick);
+                var tickEvent = new Event(this, World.Timestamp, EventType.Tick);
 
-            BatchRunEventScriptForAllUnits(tickEvent);
+                BatchRunEventScriptForAllUnits(tickEvent);
 
-            ResolveAllBattles();
+                ResolveAllBattles();
+            }
         }
 
         public virtual void EnsureInitialWorldState()

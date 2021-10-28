@@ -16,7 +16,7 @@ namespace Multiverse
 
         public override int MaxAvailableUses => 3;
 
-        public override ulong CooldownTime => 1;
+        public override long CooldownTime => 1;
 
         public override int ActionPointCost => 10;
 

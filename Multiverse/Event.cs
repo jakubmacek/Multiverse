@@ -8,7 +8,7 @@ namespace Multiverse
 {
     public class Event
     {
-        public readonly ulong Timestamp;
+        public readonly long Timestamp;
 
         public readonly EventType Type;
 
@@ -16,7 +16,7 @@ namespace Multiverse
 
         public IWorld World => Universe.World;
 
-        public Event(IUniverse universe, ulong timestamp, EventType type)
+        public Event(IUniverse universe, long timestamp, EventType type)
         {
             Universe = universe;
             Timestamp = timestamp;

@@ -23,8 +23,9 @@ Currently, there is a single, very simple, universe programmed. If you want a si
 * Implement the Web application:
   * Simulation - regular ticks for all running worlds.
   * User registration, sign in, sign out. User may have multiple player accounts.
+  * Register and sign in using external authentication provider (GitHub, Facebook, Google).
   * Administration of worlds - create new, delete.
-  * World map view, unit view with list of their resources, abilities, etc. This is fairly necessary for debugging. Maybe use Vue.js / React, maybe dynamically generated SVG for the map.
+  * World map view, unit view with list of their resources, abilities, etc. This is fairly necessary for debugging. Maybe use Blazor / Vue.js / React, maybe dynamically generated SVG for the map.
   * Player script management - create new script, assign to units, show log, send message to a unit (i.e. an order).
 * Write documentation with script examples.
 * Implement communication between units. Should the unit receive communication immediately or during the next tick? Should distance be limited? This will affect the scenario where individual units are fairly dumb, but they obey commands from their commanding unit.

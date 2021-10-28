@@ -5,6 +5,7 @@
     using System.Data.Common;
     using System.Runtime.Serialization;
     using NHibernate.Engine;
+    using NpgsqlTypes;
     using SqlTypes;
     using UserTypes;
 
@@ -67,8 +68,7 @@
         {
             get
             {
-                //return new SqlType[] { new NpgsqlExtendedSqlType(DbType.String, NpgsqlDbType.Json) };
-                return new SqlType[] { new SqlType(DbType.String, 60000) };
+                return new SqlType[] { new NpgsqlExtendedSqlType(DbType.String, NpgsqlDbType.Json) };
             }
         }
 

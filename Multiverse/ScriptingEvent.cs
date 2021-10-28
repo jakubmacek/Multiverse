@@ -8,11 +8,11 @@ namespace Multiverse
 {
     public class ScriptingEvent
     {
-        public readonly ulong timestamp;
+        public readonly long timestamp;
 
         public readonly string type;
 
-        public ScriptingEvent(ulong timestamp, EventType type)
+        public ScriptingEvent(long timestamp, EventType type)
         {
             this.timestamp = timestamp;
             this.type = type.ToString();

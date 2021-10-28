@@ -15,9 +15,9 @@ namespace Multiverse
 
         public virtual DateTime SentAt { get; set; }
 
-        public virtual ulong SentAtTimestamp { get; set; }
+        public virtual long SentAtTimestamp { get; set; }
 
-        public virtual ulong? ReceivedAtTimestamp { get; set; }
+        public virtual long? ReceivedAtTimestamp { get; set; }
 
         public virtual Guid? FromUnit { get; set; }
 

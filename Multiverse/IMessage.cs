@@ -12,11 +12,11 @@ namespace Multiverse
 
         PlayerData PlayerData { get; set; }
 
-        ulong? ReceivedAtTimestamp { get; set; }
+        long? ReceivedAtTimestamp { get; set; }
 
         DateTime SentAt { get; set; }
 
-        ulong SentAtTimestamp { get; set; }
+        long SentAtTimestamp { get; set; }
 
         string Text { get; set; }
 
