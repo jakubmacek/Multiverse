@@ -90,7 +90,12 @@ namespace Multiverse.Server
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Multiverse.Server v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+
+            app.UseCors(policy =>
+            {
+                policy.WithOrigins("https://localhost:20013").AllowAnyMethod().AllowAnyHeader();
+            });
 
             app.UseRouting();
 

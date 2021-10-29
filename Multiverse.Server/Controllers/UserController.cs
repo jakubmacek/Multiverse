@@ -36,8 +36,21 @@ namespace Multiverse.Server.Controllers
             _passwordHasher = passwordHasher;
         }
 
-        [HttpPost("{name}/authorizations")]
-        public ActionResult<object> Authorize(string name, string password, int playerId)
+        public class AvailablePlayers
+        {
+            public List<UserPlayer> Players { get; set; }
+
+            public AvailablePlayers(List<UserPlayer> players)
+            {
+                Players = players;
+            }
+        }
+
+        [HttpPost("{name}/players", Name = "GetAvailablePlayers")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        public ActionResult<AvailablePlayers> GetAvailablePlayers(string name, string password)
         {
             using (var session = _sessionFactory.OpenSession())
             {
@@ -45,9 +58,38 @@ namespace Multiverse.Server.Controllers
                 if (user == null)
                     return NotFound();
 
-                var userPlayer = user.Players.FirstOrDefault(x => x.PlayerId == playerId);
-                if (userPlayer.PlayerId == 0)
+                var passwordVerification = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
+                if (passwordVerification == PasswordVerificationResult.Failed)
                     return StatusCode(401);
+
+                return new AvailablePlayers(user.Players);
+            }
+        }
+
+        public class Authorization
+        {
+            public string Token { get; set; }
+
+            public DateTime ExpiresAt { get; set; }
+
+            public Authorization(string token, DateTime expiresAt)
+            {
+                Token = token;
+                ExpiresAt = expiresAt;
+            }
+        }
+
+        [HttpPost("{name}/authorizations", Name = "AuthorizeUser")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        public ActionResult<Authorization> Authorize(string name, string password, int playerId)
+        {
+            using (var session = _sessionFactory.OpenSession())
+            {
+                var user = session.Get<User>(name);
+                if (user == null)
+                    return NotFound();
 
                 var passwordVerification = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
                 if (passwordVerification == PasswordVerificationResult.Failed)
@@ -59,6 +101,10 @@ namespace Multiverse.Server.Controllers
                     session.Save(user);
                     session.Flush();
                 }
+
+                var userPlayer = user.Players.FirstOrDefault(x => x.PlayerId == playerId);
+                if (userPlayer.PlayerId == 0)
+                    return StatusCode(401);
 
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = System.Text.Encoding.ASCII.GetBytes(_authenticationSettings.JwtSecret);
@@ -77,11 +123,7 @@ namespace Multiverse.Server.Controllers
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 var tokenString = tokenHandler.WriteToken(token);
 
-                return new
-                {
-                    token = tokenString,
-                    expiresAt = tokenDescriptor.Expires
-                };
+                return new Authorization(tokenString, tokenDescriptor.Expires.Value);
             }
         }
     }

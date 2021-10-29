@@ -1,0 +1,13 @@
+﻿@inherits LayoutComponentBase
+@inject Multiverse.WebApp.Services.IAuthorizationService AuthorizationService
+@inject NavigationManager NavigationManager
+
+@if (AuthorizationService.IsLoggedIn)
+{
+    <NavMenu />
+}
+
+<div class="container-fluid">
+    <Alert />
+    @Body
+</div>
