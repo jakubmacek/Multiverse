@@ -38,7 +38,6 @@ namespace Multiverse.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        //[Authorization.Authorize]
         public RunningWorldInfo Get(int id)
         {
             return new RunningWorldInfo(_runningWorlds[id]);

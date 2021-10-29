@@ -47,6 +47,8 @@ namespace Multiverse.Server
 
             services.AddControllers();
 
+            services.AddSingleton<Microsoft.AspNetCore.Identity.PasswordHasher<Authorization.User>>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Multiverse.Server", Version = "v1" });

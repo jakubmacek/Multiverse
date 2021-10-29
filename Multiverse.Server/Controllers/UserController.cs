@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -17,15 +18,22 @@ namespace Multiverse.Server.Controllers
     [Route("users")]
     public class UserController : ControllerBase
     {
+        private readonly PasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
         private readonly ISessionFactory _sessionFactory;
         private readonly ILogger<UserController> _logger;
 
-        public UserController(ILogger<UserController> logger, ISessionFactory sessionFactory, IOptions<AuthenticationSettings> authenticationSettings)
+        public UserController(
+            ILogger<UserController> logger,
+            ISessionFactory sessionFactory,
+            IOptions<AuthenticationSettings> authenticationSettings,
+            PasswordHasher<User> passwordHasher
+        )
         {
             _logger = logger;
             _sessionFactory = sessionFactory;
             _authenticationSettings = authenticationSettings.Value;
+            _passwordHasher = passwordHasher;
         }
 
         [HttpPost("{name}/authorizations")]
@@ -41,9 +49,16 @@ namespace Multiverse.Server.Controllers
                 if (userPlayer.PlayerId == 0)
                     return StatusCode(401);
 
-                if (string.IsNullOrEmpty(password))
+                var passwordVerification = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
+                if (passwordVerification == PasswordVerificationResult.Failed)
                     return StatusCode(401);
-                //TODO implement real password checking, with hashing and salting
+
+                if (passwordVerification == PasswordVerificationResult.SuccessRehashNeeded)
+                {
+                    user.Password = _passwordHasher.HashPassword(user, password);
+                    session.Save(user);
+                    session.Flush();
+                }
 
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = System.Text.Encoding.ASCII.GetBytes(_authenticationSettings.JwtSecret);
@@ -54,10 +69,11 @@ namespace Multiverse.Server.Controllers
                         new Claim("userName", user.Name, ClaimValueTypes.String),
                         new Claim("playerId", userPlayer.PlayerId.ToString(), ClaimValueTypes.Integer),
                     }),
-                    //Expires = DateTime.UtcNow.AddHours(1),
-                    Expires = DateTime.UtcNow.AddYears(1),
+                    Expires = DateTime.UtcNow.AddHours(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
+                if (user.Role != null)
+                    tokenDescriptor.Subject.AddClaim(new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role));
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 var tokenString = tokenHandler.WriteToken(token);
 
@@ -66,26 +82,6 @@ namespace Multiverse.Server.Controllers
                     token = tokenString,
                     expiresAt = tokenDescriptor.Expires
                 };
-
-                //const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-                //var random = new Random();
-                //var tokenString = new string(Enumerable.Repeat(chars, 50).Select(s => s[random.Next(s.Length)]).ToArray());
-
-                //var accessToken = new UserAccessToken()
-                //{
-                //    Token = tokenString,
-                //    ExpiresAt = DateTime.UtcNow.AddHours(1),
-                //    User = user,
-                //    PlayerId = userPlayer.PlayerId,
-                //};
-                //session.Save(accessToken);
-                //session.Flush();
-
-                //return new
-                //{
-                //    token = accessToken.Token,
-                //    expiresAt = accessToken.ExpiresAt
-                //};
             }
         }
     }
