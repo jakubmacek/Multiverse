@@ -1,4 +1,5 @@
 ﻿@inject IAccountService AccountService
+@implements IDisposable
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
@@ -20,6 +21,11 @@
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        @if (AccountService.SelectedWorld != null)
+                        {
+                            <span class="badge bg-secondary" title="Selected world">@AccountService.SelectedWorld.Name</span>
+                        }
+                        &nbsp;
                         @AccountService.Player.Name (@AccountService.Player.Id)
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
@@ -30,3 +36,23 @@
         </div>
     </div>
 </nav>
+
+@code
+{
+    private void Changed(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        AccountService.PropertyChanged -= Changed;
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        AccountService.PropertyChanged += Changed;
+
+        return base.OnInitializedAsync();
+    }
+}

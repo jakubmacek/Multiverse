@@ -381,6 +381,10 @@
             "type": "integer",
             "format": "int64"
           },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
           "running": {
             "type": "boolean"
           }

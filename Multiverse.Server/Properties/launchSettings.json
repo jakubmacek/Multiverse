@@ -25,7 +25,7 @@
       "applicationUrl": "https://localhost:20011;http://localhost:20012",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "Multiverse:AllowedWorlds": "1",
+        "Multiverse:AllowedWorlds": "1,2",
         "Multiverse:Universes": "X:\\Dropbox\\Projects\\Multiverse\\Multiverse.SimpleUniverse\\bin\\Debug\\net5.0\\Multiverse.SimpleUniverse.dll"
       }
     }

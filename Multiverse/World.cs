@@ -13,5 +13,7 @@ namespace Multiverse
         public virtual string Universe { get; set; } = string.Empty;
 
         public virtual long Timestamp { get; set; }
+
+        public virtual string Name { get; set; } = string.Empty;
     }
 }

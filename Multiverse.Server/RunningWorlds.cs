@@ -73,6 +73,7 @@ namespace Multiverse.Server
                         Id = world.Id,
                         Universe = world.Universe,
                         Timestamp = world.Timestamp,
+                        Name = world.Name,
                         Running = runningWorld != null,
                     });
                 }

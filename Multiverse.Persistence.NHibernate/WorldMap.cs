@@ -9,6 +9,7 @@ namespace Multiverse.Persistence.NHibernate
             Id(x => x.Id, i => { i.Column("id"); });
             Property(x => x.Universe, p => { p.NotNullable(true); p.Length(200); });
             Property(x => x.Timestamp, p => { p.NotNullable(true); });
+            Property(x => x.Name, p => { p.NotNullable(true); p.Length(100); });
         }
     }
 }
