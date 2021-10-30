@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Multiverse.Server.Persistence;
 using System;
+using System.Linq;
 
 namespace Multiverse.Server
 {
@@ -64,18 +65,24 @@ namespace Multiverse.Server
 
             services.AddSingleton<IRepositoryFactoryFactory>(s => new Multiverse.Persistence.NHibernate.NHibernateRepositoryFactoryFactory(() => s.GetRequiredService<NHibernate.Cfg.Configuration>()));
 
-            services.AddSingleton(s =>
-            {
-                var registrations = new UniverseRegistrations(s.GetRequiredService<IRepositoryFactoryFactory>());
-                registrations.RegisterFromAssembly(@"X:\Dropbox\Projects\Multiverse\Multiverse.SimpleUniverse\bin\Debug\net5.0\Multiverse.SimpleUniverse.dll"); // TODO read from configuration / environment / command line
-                return registrations;
-            });
+
+            var allowedWorldsString = Configuration["Multiverse:AllowedWorlds"];
+            if (string.IsNullOrEmpty(allowedWorldsString))
+                throw new Exception("Missing configuration variable Multiverse:AllowedWorlds");
+            var allowedWorlds = new AllowedRunningWorlds();
+            allowedWorlds.AddRange(allowedWorldsString.Split(',').Select(x => int.Parse(x)));
+            services.AddSingleton(allowedWorlds);
 
             services.AddSingleton(s =>
             {
-                var allowedWorlds = new AllowedRunningWorlds();
-                allowedWorlds.Add(1); // TODO read from configuration / environment / command line
-                return allowedWorlds;
+                var universesString = Configuration["Multiverse:Universes"];
+                if (string.IsNullOrEmpty(universesString))
+                    throw new Exception("Missing configuration variable Multiverse:Universes");
+
+                var registrations = new UniverseRegistrations(s.GetRequiredService<IRepositoryFactoryFactory>());
+                foreach (var universeImplementationPath in universesString.Split(';'))
+                    registrations.RegisterFromAssembly(universeImplementationPath);
+                return registrations;
             });
 
             services.AddSingleton<RunningWorlds>();

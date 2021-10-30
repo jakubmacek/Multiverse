@@ -48,14 +48,35 @@ namespace Multiverse.Server
 
                     using (var session = _sessionFactory.OpenStatelessSession())
                     {
-                        //var world = session.Get<World>(worldId);
-                        var world = new World() { Id = 1, Universe = "Multiverse.SimpleUniverse.SimpleUniverse" };
+                        var world = session.Get<World>(worldId);
                         var universe = _universeRegistrations.CreateUniverse(world.Universe, world.Id);
                         runningWorld = new RunningWorld(universe);
                         _runningWorlds[worldId] = runningWorld;
                         return runningWorld;
                     }
                 }
+            }
+        }
+
+        public List<AvailableWorld> GetAvailableWorlds()
+        {
+            using (var session = _sessionFactory.OpenStatelessSession())
+            {
+                var allowedWorldIds = _allowedWorlds.ToArray();
+                var worlds = session.Query<World>().Where(x => allowedWorldIds.Contains(x.Id)).ToList();
+                var availableWorlds = new List<AvailableWorld>();
+                foreach (var world in worlds)
+                {
+                    _runningWorlds.TryGetValue(world.Id, out var runningWorld);
+                    availableWorlds.Add(new AvailableWorld
+                    {
+                        Id = world.Id,
+                        Universe = world.Universe,
+                        Timestamp = world.Timestamp,
+                        Running = runningWorld != null,
+                    });
+                }
+                return availableWorlds;
             }
         }
     }

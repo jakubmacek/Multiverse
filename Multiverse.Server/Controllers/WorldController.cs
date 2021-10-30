@@ -37,10 +37,16 @@ namespace Multiverse.Server.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetWorld")]
         public RunningWorldInfo Get(int id)
         {
             return new RunningWorldInfo(_runningWorlds[id]);
+        }
+
+        [HttpGet(Name = "GetWorlds")]
+        public List<AvailableWorld> GetWorlds()
+        {
+            return _runningWorlds.GetAvailableWorlds();
         }
     }
 }

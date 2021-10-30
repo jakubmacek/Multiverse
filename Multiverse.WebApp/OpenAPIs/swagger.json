@@ -261,6 +261,7 @@
         "tags": [
           "World"
         ],
+        "operationId": "GetWorld",
         "parameters": [
           {
             "name": "id",
@@ -295,6 +296,45 @@
           }
         }
       }
+    },
+    "/worlds": {
+      "get": {
+        "tags": [
+          "World"
+        ],
+        "operationId": "GetWorlds",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailableWorld"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailableWorld"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailableWorld"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -322,6 +362,27 @@
               "$ref": "#/components/schemas/UserPlayer"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AvailableWorld": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "universe": {
+            "type": "string",
+            "nullable": true
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "running": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
