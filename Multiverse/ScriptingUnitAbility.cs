@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
+#pragma warning disable IDE1006 // Naming Styles camelCase names for scripting
     public class ScriptingUnitAbility
     {
-        private IUnitAbility _ability;
+        private readonly IUnitAbility _ability;
 
         public string name => _ability.Name;
 
@@ -29,4 +30,5 @@ namespace Multiverse
             _ability = ability;
         }
     }
+#pragma warning restore IDE1006 // Naming Styles
 }

@@ -309,7 +309,69 @@ namespace Multiverse
         {
         }
 
-        public virtual ScanAroundResult ScanAround(Unit self)
+        public Map ScanMap(int centerX, int centerY, int distance, int playerId)
+        {
+            if (distance < 0)
+                throw new ArgumentException("Distance cannot be negative.", nameof(distance));
+
+            var player = Repository.GetPlayer(playerId);
+            if (player == null)
+                throw new ArgumentException($"No such player '{playerId}'.", nameof(playerId));
+
+            var minX = centerX - distance - (distance + 1) / 2;
+            var maxX = centerX + distance + (distance + 1) / 2;
+            var minY = centerY - distance;
+            var maxY = centerY + distance;
+            var width = maxX - minX + 1;
+            var height = maxY - minY + 1;
+
+            var playersUnits = Repository.Units
+                .Where(u => u.Player == player)
+                .Where(u => u.Place.X >= minX && u.Place.X <= maxX && u.Place.Y >= minY && u.Place.Y <= maxY)
+                .ToList();
+
+            //TODO Select seen unit with the most details.
+
+            var addedUnits = new HashSet<Guid>();
+
+            bool[,] canSeePlace = new bool[width, height]; // from minX to maxX, from minY to maxY
+            List<MapUnit>[,] placeUnits = new List<MapUnit>[width, height]; // from minX to maxX, from minY to maxY
+            for (var y = minY; y <= maxY; y++)
+                for (var x = minX; x <= maxY; x++)
+                    placeUnits[x - minX, y - minY] = new List<MapUnit>();
+
+            foreach (var unit in playersUnits)
+            {
+                placeUnits[unit.Place.X - minX, unit.Place.Y - minY].Add(new MapUnit(new ScriptingUnitSelf(unit), Resources.Values));
+                addedUnits.Add(unit.Id);
+                foreach (var unitCanSeePlace in unit.ScanCapability.GetRange(unit.Place))
+                    canSeePlace[unitCanSeePlace.X - minX, unitCanSeePlace.Y - minY] = true;
+            }
+
+            foreach (var unit in playersUnits)
+            {
+                var scanAroundResult = ScanAround(unit, u =>
+                    !addedUnits.Contains(u.Id) &&
+                    u.Place.X >= minX && u.Place.X <= maxX && u.Place.Y >= minY && u.Place.Y <= maxY
+                );
+                foreach (var scannedUnit in scanAroundResult.Units)
+                {
+                    addedUnits.Add(scannedUnit.idguid);
+
+                    canSeePlace[unit.Place.X - minX, unit.Place.Y - minY] = true;
+                    placeUnits[scannedUnit.x - minX, scannedUnit.y - minY].Add(new MapUnit(scannedUnit, Resources.Values));
+                }
+            }
+
+            var mapPlaces = new List<MapPlace>();
+            for (var y = minY; y <= maxY; y++)
+                for (var x = minX; x <= maxY; x++)
+                    if (canSeePlace[x - minX, y - minY])
+                        mapPlaces.Add(new MapPlace(x, y, placeUnits[x - minX, y - minY]));
+            return new Map(minX, maxX, minY, maxY, mapPlaces);
+        }
+
+        public virtual ScanAroundResult ScanAround(Unit self, Predicate<Unit> filter)
         {
             if (self.Dead)
                 return new ScanAroundResult(new List<ScriptingUnit>());
@@ -326,6 +388,8 @@ namespace Multiverse
             var scannedUnits = new List<ScriptingUnit>();
             foreach (var unit in units)
             {
+                if (!filter(unit))
+                    continue;
                 var scannedUnit = scanCapability.Scan(self, unit);
                 if (scannedUnit != null)
                     scannedUnits.Add(scannedUnit);

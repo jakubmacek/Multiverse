@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
+#pragma warning disable IDE1006 // Naming Styles camelCase names for scripting
     public class ScriptingUnit
     {
         protected IUnit _unit;
 
-        private readonly bool _seeHealthAndMovement;
+        internal readonly bool _seeHealthAndMovement;
 
         public Guid idguid => _unit.Id;
 
@@ -56,4 +57,5 @@ namespace Multiverse
                 abilities = new ScriptingUnitAbilities(unit.Abilities);
         }
     }
+#pragma warning restore IDE1006 // Naming Styles
 }

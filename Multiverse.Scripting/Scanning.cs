@@ -35,9 +35,9 @@ namespace Multiverse.Scripting
         {
             var unit = _universe.Repository.GetUnit(self.idguid);
             if (unit == null)
-                return new ScriptingUnit[0];
+                return Array.Empty<ScriptingUnit>();
 
-            return _universe.ScanAround(unit).Units.ToArray();
+            return _universe.ScanAround(unit, u => true).Units.ToArray();
         }
 
         public ScriptingUnit ScanUnit(ScriptingUnitSelf self, ScriptingUnit target)

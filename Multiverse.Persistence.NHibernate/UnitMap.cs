@@ -49,7 +49,7 @@ namespace Multiverse.Persistence.NHibernate
     {
         public UnitSubclassMap()
         {
-            DiscriminatorValue(nameof(T));
+            DiscriminatorValue(typeof(T).Name);
         }
     }
 }

@@ -1,0 +1,88 @@
+﻿@page "/map"
+@inject ApiClient ApiClient
+@inject IAccountService AccountService
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+
+<h1>Map of @AccountService.SelectedWorld.Name</h1>
+
+@if (map == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="hexgrid">
+        @for (int y = 0; y < height; y++)
+        {
+            var offsetX = (height - y + 1) / 2;
+            <div class="hexrow">
+                @for (int x = offsetX; x < offsetX + width; x++)
+                {
+                    var place = indexedPlaces[x, y];
+                    <div class="hex @GetPlaceClasses(place)">
+                        @(map.MinX + x), @(map.MinY + y)<br/>@offsetX
+                        @if (place != null && place.Units != null)
+                        {
+                            @foreach (var unit in place.Units)
+                            {
+                                <br /><span style="font-size: 8pt;">@unit.Name</span>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+
+
+@code {
+    private int centerX = 0;
+
+    private int centerY = 0;
+
+    private int width = 0;
+
+    private int height = 0;
+
+    private Services.Map? map = null;
+
+    private MapPlace?[,] indexedPlaces = new MapPlace?[0, 0];
+
+    private int playerId = -1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadMap();
+    }
+
+    protected string GetPlaceClasses(MapPlace? place)
+    {
+        if (place == null)
+            return "fog-of-war";
+        if (place.Units == null)
+            return "";
+
+        return (place.Units.Any(x => x.PlayerId == playerId) ? "has-own-units" : "")
+            + (place.Units.Any(x => x.PlayerId != playerId && x.PlayerId != 0) ? " has-enemy-units" : "");
+    }
+
+    protected async Task ReloadMap()
+    {
+        if (AccountService.Player != null && AccountService.SelectedWorld != null)
+        {
+            playerId = AccountService.Player.Id;
+            map = await ApiClient.GetMapAsync(AccountService.SelectedWorld.Id, centerX, centerY);
+            height = width = map.MaxY - map.MinY + 1;
+            //JsRuntime.ConsoleLog(map);
+            indexedPlaces = new MapPlace?[map.MaxX - map.MinX + 1, map.MaxY - map.MinY + 1];
+            foreach (var place in map.Places)
+                indexedPlaces[place.X - map.MinX, place.Y - map.MinY] = place;
+        } 
+        else
+        {
+            NavigationManager.NavigateTo("/worlds");
+        }
+    }
+}

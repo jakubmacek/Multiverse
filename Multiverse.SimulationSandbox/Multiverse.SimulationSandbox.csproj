@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Multiverse.Persistence.NHibernate\Multiverse.Persistence.NHibernate.csproj" />
+    <ProjectReference Include="..\Multiverse.Server\Multiverse.Server.csproj" />
     <ProjectReference Include="..\Multiverse.SimpleUniverse\Multiverse.SimpleUniverse.csproj" />
     <ProjectReference Include="..\Multiverse\Multiverse.csproj" />
   </ItemGroup>

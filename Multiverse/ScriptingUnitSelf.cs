@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Multiverse
 {
+#pragma warning disable IDE1006 // Naming Styles camelCase names for scripting
     public class ScriptingUnitSelf : ScriptingUnit
     {
         public string? playerData
@@ -19,4 +20,5 @@ namespace Multiverse
         {
         }
     }
+#pragma warning restore IDE1006 // Naming Styles
 }

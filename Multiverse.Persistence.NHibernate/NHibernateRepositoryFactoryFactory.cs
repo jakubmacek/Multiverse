@@ -11,11 +11,11 @@ namespace Multiverse.Persistence.NHibernate
     {
         private bool hasBeenDisposed;
 
-        private Func<NHCfg.Configuration> createInitialConfiguration;
+        private readonly Func<NHCfg.Configuration> createInitialConfiguration;
 
-        private Dictionary<string, IRepositoryFactory> repositoryFactories = new Dictionary<string, IRepositoryFactory>();
+        private readonly Dictionary<string, IRepositoryFactory> repositoryFactories = new();
 
-        private List<ISessionFactory> sessionFactories = new List<ISessionFactory>();
+        private readonly List<ISessionFactory> sessionFactories = new();
 
         public NHibernateRepositoryFactoryFactory(Func<NHCfg.Configuration> createInitialConfiguration)
         {
@@ -79,7 +79,7 @@ namespace Multiverse.Persistence.NHibernate
 
         class AddUnitsToModelMapper : IUnitTypeVisitor
         {
-            private ModelMapper map;
+            private readonly ModelMapper map;
 
             public AddUnitsToModelMapper(ModelMapper map)
             {

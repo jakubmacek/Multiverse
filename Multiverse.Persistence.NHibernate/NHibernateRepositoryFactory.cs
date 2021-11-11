@@ -23,7 +23,9 @@ namespace Multiverse.Persistence.NHibernate
         {
             //InitializeStorage();
 
+#pragma warning disable DF0010 // Marks undisposed local variables. Session is disposed in the Repository.
             var session = _sessionFactory.OpenSession();
+#pragma warning restore DF0010 // Marks undisposed local variables.
             //session.FlushMode = FlushMode.Auto;
 
             var world = session.Get<World>(worldId);

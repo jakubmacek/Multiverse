@@ -31,3 +31,15 @@ Currently, there is a single, very simple, universe programmed. If you want a si
 * Implement communication between units. Should the unit receive communication immediately or during the next tick? Should distance be limited? This will affect the scenario where individual units are fairly dumb, but they obey commands from their commanding unit.
 * Implement scripting libraries - especially pathfinding.
 * Unit deaths. Unit with HP <= 0 will not be able to handle events. The records need to be cleaned up after a while.
+
+## Ideas
+
+* https://devkimchi.com/2020/06/03/adding-react-components-to-blazor-webassembly-app/
+* https://github.com/Hellenic/react-hexgrid
+* https://vmcreative.github.io/Hexi-Flexi-Grid/
+* https://npm.io/package/honeycomb-grid-vincent
+* CSS hex-grid would be more practical, because hexes can contain regular HTML elements.
+* https://www.blazor.zone/
+* https://codepen.io/SanderMoolin/pen/BRLvNb
+* https://css-tricks.com/hexagons-and-beyond-flexible-responsive-grid-patterns-sans-media-queries/
+

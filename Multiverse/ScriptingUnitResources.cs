@@ -8,7 +8,7 @@ namespace Multiverse
 {
     public class ScriptingUnitResources
     {
-        private IDictionary<int, int> _resources;
+        private readonly IDictionary<int, int> _resources;
 
         public int this[int id]
         {

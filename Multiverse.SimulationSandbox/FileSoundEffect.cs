@@ -8,9 +8,9 @@ namespace Multiverse.SimulationSandbox
 {
     public class FileSoundEffect : ISoundEffect
     {
-        private static NetCoreAudio.Player player = new NetCoreAudio.Player();
+        private static readonly NetCoreAudio.Player player = new();
 
-        private string _filePath;
+        private readonly string _filePath;
 
         public FileSoundEffect(string filePath)
         {

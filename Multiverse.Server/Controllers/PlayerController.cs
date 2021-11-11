@@ -10,11 +10,11 @@ namespace Multiverse.Server.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly ISessionFactory _sessionFactory;
-        private readonly ILogger<PlayerController> _logger;
+        //private readonly ILogger<PlayerController> _logger;
 
-        public PlayerController(ILogger<PlayerController> logger, ISessionFactory sessionFactory)
+        public PlayerController(/*ILogger<PlayerController> logger, */ISessionFactory sessionFactory)
         {
-            _logger = logger;
+            //_logger = logger;
             _sessionFactory = sessionFactory;
         }
 

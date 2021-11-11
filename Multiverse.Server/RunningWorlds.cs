@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Multiverse.Server
 {
-    public class RunningWorlds : IDisposable
+    public sealed class RunningWorlds : IDisposable
     {
         private readonly NHibernate.ISessionFactory _sessionFactory;
         private readonly UniverseRegistrations _universeRegistrations;
         private readonly AllowedRunningWorlds _allowedWorlds;
         private readonly Timer _timer;
-        private Dictionary<int, RunningWorld> _runningWorlds = new Dictionary<int, RunningWorld>();
+        private readonly Dictionary<int, RunningWorld> _runningWorlds = new();
 
         public RunningWorlds(UniverseRegistrations universeRegistrations, NHibernate.ISessionFactory sessionFactory, AllowedRunningWorlds allowedWorlds)
         {
@@ -63,7 +63,7 @@ namespace Multiverse.Server
             using (var session = _sessionFactory.OpenStatelessSession())
             {
                 var allowedWorldIds = _allowedWorlds.ToArray();
-                var worlds = session.Query<World>().Where(x => allowedWorldIds.Contains(x.Id)).ToList();
+                var worlds = session.Query<World>().Where(x => allowedWorldIds.Contains(x.Id)).OrderBy(x => x.Id).ToList();
                 var availableWorlds = new List<AvailableWorld>();
                 foreach (var world in worlds)
                 {

@@ -10,7 +10,7 @@ namespace Multiverse.Server
     public class UniverseRegistrations
     {
         private readonly IRepositoryFactoryFactory _repositoryFactoryFactory;
-        private readonly Dictionary<string, IUniverseRegistration> _registrations = new Dictionary<string, IUniverseRegistration>();
+        private readonly Dictionary<string, IUniverseRegistration> _registrations = new();
 
         public UniverseRegistrations(IRepositoryFactoryFactory repositoryFactoryFactory)
         {
@@ -36,7 +36,9 @@ namespace Multiverse.Server
                 .Where(x => typeof(IUniverse).IsAssignableFrom(x))
                 .Select(x => x.GetCustomAttribute<UniverseRegistrationAttribute>())
                 .Where(x => x != null)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 .Select(x => x.CreateRegistration())
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 .ToList()
                 .ForEach(Register);
         }

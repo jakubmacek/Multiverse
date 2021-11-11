@@ -29,7 +29,7 @@ namespace Multiverse.Server
                 {
                     options.Events = new JwtBearerEvents()
                     {
-                        OnMessageReceived = async (context) =>
+                        OnMessageReceived = (context) =>
                         {
                             if (context.Request.Headers["Authorization"].Count == 0)
                             {
@@ -37,6 +37,7 @@ namespace Multiverse.Server
                                 if (authorizationCookie != null && authorizationCookie.Length > 0)
                                     context.Token = authorizationCookie;
                             }
+                            return System.Threading.Tasks.Task.CompletedTask;
                         }
                     };
                     options.TokenValidationParameters.ValidateIssuerSigningKey = true;
@@ -61,7 +62,9 @@ namespace Multiverse.Server
 
             services.AddSingleton(s => SessionFactoryCreator.Create(s.GetRequiredService<NHibernate.Cfg.Configuration>()));
 
+#pragma warning disable DF0001 // Marks undisposed anonymous objects from method invocations.
             services.AddTransient(s => s.GetRequiredService<NHibernate.ISessionFactory>().OpenSession());
+#pragma warning restore DF0001 // Marks undisposed anonymous objects from method invocations.
 
             services.AddSingleton<IRepositoryFactoryFactory>(s => new Multiverse.Persistence.NHibernate.NHibernateRepositoryFactoryFactory(() => s.GetRequiredService<NHibernate.Cfg.Configuration>()));
 
@@ -79,7 +82,9 @@ namespace Multiverse.Server
                 if (string.IsNullOrEmpty(universesString))
                     throw new Exception("Missing configuration variable Multiverse:Universes");
 
+#pragma warning disable DF0001 // Marks undisposed anonymous objects from method invocations. IRepositoryFactoryFactory is global singleton, it should not be disposed.
                 var registrations = new UniverseRegistrations(s.GetRequiredService<IRepositoryFactoryFactory>());
+#pragma warning restore DF0001 // Marks undisposed anonymous objects from method invocations.
                 foreach (var universeImplementationPath in universesString.Split(';'))
                     registrations.RegisterFromAssembly(universeImplementationPath);
                 return registrations;

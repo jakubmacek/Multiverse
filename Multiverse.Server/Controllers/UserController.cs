@@ -123,6 +123,8 @@ namespace Multiverse.Server.Controllers
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 var tokenString = tokenHandler.WriteToken(token);
 
+                _logger.LogInformation($"User '{user.Name}' logged in as player '{userPlayer.PlayerId}'.");
+
                 return new Authorization(tokenString, tokenDescriptor.Expires.Value);
             }
         }

@@ -12,7 +12,7 @@
 
 @code {
     [Parameter]
-    public string Id { get; set; } = "default-alert";
+    public string Id { get; set; } = Models.Alert.DefaultId;
 
     [Parameter]
     public bool Fade { get; set; } = true;
@@ -66,7 +66,7 @@
         StateHasChanged();
     }
 
-    private void OnLocationChange(object sender, LocationChangedEventArgs e)
+    private void OnLocationChange(object? sender, LocationChangedEventArgs e)
     {
         AlertService.Clear(Id);
     }
@@ -94,7 +94,7 @@
         StateHasChanged();
     }
 
-    private string CssClass(Models.Alert alert) 
+    private string? CssClass(Models.Alert alert) 
     {
         if (alert == null) return null;
 

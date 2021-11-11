@@ -27,7 +27,7 @@ namespace Multiverse
 
         UnitAbilityUseResult UseAbility(Unit unit, string abilityName, UnitAbilityUse use);
 
-        ScanAroundResult ScanAround(Unit unit);
+        ScanAroundResult ScanAround(Unit unit, Predicate<Unit> filter);
 
         ScriptingUnit? ScanUnit(Unit unit, Unit target);
 
@@ -38,5 +38,7 @@ namespace Multiverse
         UnitAbilityUseResult StartBattle(Unit initiator, Unit target);
 
         ISoundEffects SoundEffects { get; set; }
+
+        Map ScanMap(int centerX, int centerY, int distance, int playerId);
     }
 }

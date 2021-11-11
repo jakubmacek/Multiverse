@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Multiverse.WebApp.Models;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Multiverse.WebApp.Services
@@ -10,12 +12,13 @@ namespace Multiverse.WebApp.Services
     public interface IAccountService : INotifyPropertyChanged
     {
         AvailableWorld? SelectedWorld { get; }
-        PlayerInfo Player { get; }
+        Dictionary<int, WorldResource>? SelectedWorldResources { get; }
+        PlayerInfo? Player { get; }
 
         Task Initialize();
         Task Login(Login model);
         Task Logout();
-        void SetSelectedWorld(AvailableWorld world);
+        Task SetSelectedWorld(AvailableWorld world);
     }
 
     public class AccountService : IAccountService
@@ -34,6 +37,8 @@ namespace Multiverse.WebApp.Services
 
         public AvailableWorld? SelectedWorld { get; private set; }
 
+        public Dictionary<int, WorldResource>? SelectedWorldResources { get; private set; }
+
         public AccountService(
             ILogger<AccountService> logger,
             ApiClient apiClient,
@@ -50,7 +55,7 @@ namespace Multiverse.WebApp.Services
 
         public async Task Initialize()
         {
-            _authorizationService.Token = await _localStorageService.GetItem<string>(AuthorizationTokenStorageKey);
+            _authorizationService.Token = await _localStorageService.GetItem<string>(AuthorizationTokenStorageKey) ?? "";
             if (_authorizationService.IsLoggedIn)
             {
                 try
@@ -79,9 +84,10 @@ namespace Multiverse.WebApp.Services
             _navigationManager.NavigateTo("login");
         }
 
-        public void SetSelectedWorld(AvailableWorld world)
+        public async Task SetSelectedWorld(AvailableWorld world)
         {
             SelectedWorld = world;
+            SelectedWorldResources = (await _apiClient.GetResourcesAsync(world.Id)).ToDictionary(x => x.Id);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedWorld)));
         }
     }

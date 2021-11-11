@@ -46,7 +46,7 @@
         try
         {
             await AccountService.Login(model);
-            var returnUrl = NavigationManager.QueryString("returnUrl") ?? "";
+            var returnUrl = System.Web.HttpUtility.ParseQueryString(new Uri(NavigationManager.Uri).Query)["returnUrl"] ?? "";
             NavigationManager.NavigateTo(returnUrl);
         }
         catch (Exception ex)

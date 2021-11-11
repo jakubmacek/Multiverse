@@ -16,3 +16,49 @@
         top: 0.5rem;
     }
 }
+
+.hexgrid {
+    --hexwidth: 100px;
+    --hexmargin: 2px;
+    --hexheight: calc(var(--hexwidth) * 1.1547);
+    font-size: 0;
+
+    .hexrow {
+        display: block;
+        margin-bottom: calc(var(--hexmargin) - var(--hexwidth) * 0.2886);
+    }
+
+    .hexrow:nth-child(2n+1) {
+        margin-left: calc((var(--hexwidth) + var(--hexmargin)) / 2);
+    }
+
+    .hex {
+        text-align: center;
+        vertical-align: middle;
+        color: black;
+        background-color: #dddddd;
+        font-size: initial;
+        display: inline-block;
+        width: var(--hexwidth);
+        margin: var(--hexmargin);
+        height: var(--hexheight);
+        //line-height: var(--hexheight);
+        clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+
+        &.fog-of-war {
+            opacity: 0.3;
+        }
+
+        &.has-own-units {
+            background-color: #a7e8b8;
+        }
+
+        &.has-enemy-units {
+            background-color: #e8a7a7;
+        }
+
+        &.has-own-units.has-enemy-units {
+            background-color: #e8a7e7;
+        }
+    }
+}

@@ -7,11 +7,13 @@ using Multiverse;
 using Multiverse.Persistence.NHibernate;
 using Multiverse.SimpleUniverse;
 
+#pragma warning disable IDE0051 // Remove unused private members
+
 namespace Multiverse.SimulationSandbox
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             const string templateFilePath = "template.sqlite3";
             const string filePath = "sandbox1.sqlite3";
@@ -21,14 +23,40 @@ namespace Multiverse.SimulationSandbox
             System.IO.File.Copy(templateFilePath, filePath);
 
             //CreateEmptyUniverse(templateFilePath);
-            RunUniverse(filePath, 20, CreateInitialState);
+            //RunUniverse(filePath, 20, CreateInitialState);
+            //TestUniverse(filePath, CreateInitialState);
+
+            AdjustServerUniverse(GetConnectionStringFromConfigurationFile("../../../../Multiverse.Server/appsettings.json"), u =>
+            {
+                //u.SpawnUnit<Settler>(u.Repository.GetPlayer(1), new Place(0, 0));
+                //u.SpawnUnit<Forest>(u.Repository.GetPlayer(0), new Place(-1, 0));
+                //u.SpawnUnit<Warrior>(u.Repository.GetPlayer(1), new Place(1, 1));
+                //u.SpawnUnit<Warrior>(u.Repository.GetPlayer(1), new Place(1, 2));
+                //u.SpawnUnit<Warrior>(u.Repository.GetPlayer(2), new Place(1, 2));
+                //u.SpawnUnit<Warrior>(u.Repository.GetPlayer(2), new Place(2, 2));
+            });
+        }
+
+        private static void AdjustServerUniverse(string connectionString, Action<IUniverse> action)
+        {
+            using (var repositoryFactoryFactory = new NHibernateRepositoryFactoryFactory(() => Server.Persistence.SessionFactoryCreator.CreateConfiguration(connectionString)))
+            using (var universe = new SimpleUniverseFactory().Create(repositoryFactoryFactory, 1))
+            {
+                action(universe);
+            }
+        }
+
+        private static string GetConnectionStringFromConfigurationFile(string filePath)
+        {
+            var configuration = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(filePath));
+            return configuration?["ConnectionStrings"]?["Default"]?.ToString() ?? "";
         }
 
         private static void CreateInitialState(IUniverse universe)
         {
             var repository = universe.Repository;
 
-            var gaia = repository.GetPlayer(SimpleUniverse.SimpleUniverse.GaiaPlayerId) ?? throw new ArgumentNullException("gaia");
+            //var gaia = repository.GetPlayer(SimpleUniverse.SimpleUniverse.GaiaPlayerId) ?? throw new Exception("gaia");
             var player1 = new Player() { Id = 1, Name = "PlayerOne" };
             var player2 = new Player() { Id = 2, Name = "PlayerTwo" };
             repository.Save(player1);
@@ -107,6 +135,24 @@ namespace Multiverse.SimulationSandbox
                         DumpWorld(universe, repository, world);
                         //System.Threading.Thread.Sleep(5000);
                     }
+                }
+            }
+        }
+
+        private static void TestUniverse(string filePath, Action<IUniverse> initialState)
+        {
+            using (var repositoryFactoryFactory = CreateRepositoryFactoryFactory(filePath))
+            {
+                using (var universe = new SimpleUniverseFactory().Create(repositoryFactoryFactory, 1))
+                {
+                    universe.EnsureInitialWorldState();
+                    initialState(universe);
+
+                    var repository = universe.Repository;
+                    var world = universe.World;
+                    DumpWorld(universe, repository, world);
+
+                    var map = universe.ScanMap(0, 0, 10, 1);
                 }
             }
         }

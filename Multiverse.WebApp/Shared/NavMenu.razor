@@ -26,7 +26,10 @@
                             <span class="badge bg-secondary" title="Selected world">@AccountService.SelectedWorld.Name</span>
                         }
                         &nbsp;
-                        @AccountService.Player.Name (@AccountService.Player.Id)
+                        @if (AccountService.Player != null)
+                        {
+                            <span>@AccountService.Player.Name (@AccountService.Player.Id)</span>
+                        }
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                         <li><NavLink class="dropdown-item" href="/logout">Log out</NavLink></li>
