@@ -6,35 +6,152 @@
 
 <h1>Map of @AccountService.SelectedWorld.Name</h1>
 
-@if (map == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="hexgrid">
-        @for (int y = 0; y < height; y++)
-        {
-            var offsetX = (height - y + 1) / 2;
-            <div class="hexrow">
-                @for (int x = offsetX; x < offsetX + width; x++)
-                {
-                    var place = indexedPlaces[x, y];
-                    <div class="hex @GetPlaceClasses(place)">
-                        @(map.MinX + x), @(map.MinY + y)<br/>@offsetX
-                        @if (place != null && place.Units != null)
-                        {
-                            @foreach (var unit in place.Units)
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-8">
+            @if (map == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <div class="hexgrid">
+                    @for (int y = 0; y < height; y++)
+                    {
+                        var offsetX = (height - y + 1) / 2;
+                        <div class="hexrow">
+                            @for (int x = offsetX; x < offsetX + width; x++)
                             {
-                                <br /><span style="font-size: 8pt;">@unit.Name</span>
+                                var place = indexedPlaces[x, y];
+                                <div class="hex @GetPlaceClasses(place)" @onclick="ev => SelectPlace(place)">
+                                    @(map.MinX + x), @(map.MinY + y)<br />@offsetX
+                                    @if (place != null && place.Units != null)
+                                    {
+                                        @foreach (var unit in place.Units)
+                                        {
+                                            <br />
+
+                                            <span style="font-size: 8pt;">@unit.Name</span>
+                                        }
+                                    }
+                                </div>
                             }
-                        }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-4">
+            @if (selectedPlace != null)
+            {
+                <div class="card">
+                    <div class="card-header">
+                        Place: @selectedPlace.X, @selectedPlace.Y
                     </div>
-                }
-            </div>
-        }
+                    <ul class="list-group list-group-flush">
+                        @foreach (var unit in selectedPlace.Units)
+                        {
+                            <li class="list-group-item @(GetUnitClasses(unit))" @onclick="ev => SelectUnit(unit)" style="cursor: pointer;">
+                                <img src="/images/units/@(unit.Type).png" alt="@unit.Type" style="height: 32px; max-width: 64px;" />
+                                @unit.Name
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            @if (selectedUnit != null)
+            {
+                <br/>
+                <div class="card">
+                    <div class="card-header @GetUnitClasses(selectedUnit)">
+                        Unit: @selectedUnit.Name
+                    </div>
+                    <img class="card-img-top" src="/images/units/@(selectedUnit.Type).png" alt="@selectedUnit.Type">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <strong>Player</strong>: @GetUnitPlayerName(selectedUnit)
+                            <strong>ID</strong>: @selectedUnit.Id<br/>
+                        </h5>
+
+                        @if (selectedUnit.Indestructible != null || selectedUnit.MaxHealth != null || selectedUnit.Health != null)
+                        {
+                            <div class="progress" style="height: 2em;">
+                                <div
+                                    class="progress-bar @(selectedUnit.Indestructible != null && selectedUnit.Indestructible.Value ? "bg-warning" : "bg-danger")"
+                                    role="progressbar"
+                                    style="width: 100%"
+                                    aria-valuenow="@(selectedUnit.Health != null ? selectedUnit.Health.Value : 50)"
+                                    aria-valuemin="0"
+                                    aria-valuemax="@(selectedUnit.MaxHealth != null ? selectedUnit.MaxHealth.Value : 100)">
+                                    Health: @(selectedUnit.Health != null ? selectedUnit.Health.Value.ToString() : "?") / @(selectedUnit.MaxHealth != null ? selectedUnit.MaxHealth.Value.ToString() : "?")
+                                </div>
+                            </div>
+                        }
+
+                        @if (selectedUnit.Immovable != null || selectedUnit.MaxMovement != null || selectedUnit.Movement != null)
+                        {
+                            <div class="progress" style="height: 2em;">
+                                <div
+                                    class="progress-bar @(selectedUnit.Immovable != null && selectedUnit.Immovable.Value ? "bg-secondary" : "bg-primary")"
+                                    role="progressbar"
+                                    style="width: 100%"
+                                    aria-valuenow="@(selectedUnit.Movement != null ? selectedUnit.Movement.Value : 0)"
+                                    aria-valuemin="0"
+                                    aria-valuemax="@(selectedUnit.MaxMovement != null ? selectedUnit.MaxMovement.Value : 0)">
+                                    Movement: @(selectedUnit.Movement != null ? selectedUnit.Movement.Value.ToString() : "?") / @(selectedUnit.MaxMovement != null ? selectedUnit.MaxMovement.Value.ToString() : "?")
+                                </div>
+                            </div>
+                        }
+
+
+                        @if (selectedUnit.Capacities != null || selectedUnit.Resources != null)
+                        {
+                            <br/>
+                            <table class="table table-sm table-striped">
+                                @foreach (var resource in AccountService.SelectedWorldResources.Values)
+                                {
+                                    var resourceIdString = resource.Id.ToString();
+                                    if (selectedUnit.Capacities != null && selectedUnit.Capacities.ContainsKey(resourceIdString) || selectedUnit.Resources != null && selectedUnit.Resources.ContainsKey(resourceIdString))
+                                    {
+                                        <tr>
+                                            <th>
+                                                <img src="/images/resources/@(resource.ConstantName).png" style="height: 32px; max-width: 64px;" />
+                                                @resource.Name
+                                            </th>
+                                            <td class="text-right">
+                                                @(selectedUnit.Resources != null && selectedUnit.Resources.ContainsKey(resourceIdString) ? selectedUnit.Resources[resourceIdString] : 0)
+                                                /
+                                                @(selectedUnit.Capacities != null && selectedUnit.Capacities.ContainsKey(resourceIdString) ? selectedUnit.Capacities[resourceIdString].ToString() : "?")
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                        }
+
+                        @if (selectedUnit.Abilities != null)
+                        {
+                            <br/>
+                            <table class="table table-sm table-striped">
+                                @foreach (var ability in selectedUnit.Abilities)
+                                {
+                                    <tr>
+                                        <td>@ability.Name</td>
+                                        <td>@ability.RemainingUses / @ability.MaxAvailableUses uses</td>
+                                        <td>restores @ability.UsesRestoredOnCooldown at @ability.CooldownTimestamp</td>
+                                    </tr>
+                                }
+                            </table>
+
+                        }
+                        <p class="card-text">TODO action points</p>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
-}
+</div>
 
 
 @code {
@@ -52,6 +169,10 @@ else
 
     private int playerId = -1;
 
+    private MapPlace? selectedPlace = null;
+
+    private MapUnit? selectedUnit = null;
+
     protected override async Task OnInitializedAsync()
     {
         await ReloadMap();
@@ -68,6 +189,28 @@ else
             + (place.Units.Any(x => x.PlayerId != playerId && x.PlayerId != 0) ? " has-enemy-units" : "");
     }
 
+    protected string GetUnitPlayerName(MapUnit unit)
+    {
+        if (unit.PlayerId == 0)
+            return "Gaia";
+        else if (unit.PlayerId == playerId)
+            return "me";
+        else
+            return unit.PlayerId.ToString();
+    }
+
+    protected string GetUnitClasses(MapUnit? unit)
+    {
+        if (unit == null)
+            return "";
+
+        return unit.PlayerId == 0
+            ? "text-info"
+            : unit.PlayerId == playerId
+            ? "text-success"
+            : "text-danger";
+    }
+
     protected async Task ReloadMap()
     {
         if (AccountService.Player != null && AccountService.SelectedWorld != null)
@@ -79,10 +222,27 @@ else
             indexedPlaces = new MapPlace?[map.MaxX - map.MinX + 1, map.MaxY - map.MinY + 1];
             foreach (var place in map.Places)
                 indexedPlaces[place.X - map.MinX, place.Y - map.MinY] = place;
-        } 
+        }
         else
         {
             NavigationManager.NavigateTo("/worlds");
         }
+    }
+
+    protected void SelectPlace(MapPlace? place)
+    {
+        if (selectedPlace == place)
+            return;
+        selectedPlace = place;
+        selectedUnit = null;
+        JsRuntime.ConsoleLog(place);
+    }
+
+    protected void SelectUnit(MapUnit? unit)
+    {
+        if (selectedUnit == unit)
+            return;
+        selectedUnit = unit;
+        JsRuntime.ConsoleLog(unit);
     }
 }

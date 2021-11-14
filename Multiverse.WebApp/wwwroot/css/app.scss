@@ -18,7 +18,7 @@
 }
 
 .hexgrid {
-    --hexwidth: 100px;
+    --hexwidth: 80px;
     --hexmargin: 2px;
     --hexheight: calc(var(--hexwidth) * 1.1547);
     font-size: 0;
@@ -44,6 +44,7 @@
         height: var(--hexheight);
         //line-height: var(--hexheight);
         clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+        cursor: pointer;
 
         &.fog-of-war {
             opacity: 0.3;

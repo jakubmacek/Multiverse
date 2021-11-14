@@ -15,7 +15,7 @@
     top: 0.5rem; }
 
 .hexgrid {
-  --hexwidth: 100px;
+  --hexwidth: 80px;
   --hexmargin: 2px;
   --hexheight: calc(var(--hexwidth) * 1.1547);
   font-size: 0; }
@@ -34,7 +34,8 @@
     width: var(--hexwidth);
     margin: var(--hexmargin);
     height: var(--hexheight);
-    clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%); }
+    clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+    cursor: pointer; }
     .hexgrid .hex.fog-of-war {
       opacity: 0.3; }
     .hexgrid .hex.has-own-units {
