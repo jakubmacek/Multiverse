@@ -39,18 +39,22 @@ namespace Multiverse.Server.Controllers
         }
 
         [HttpGet("{id}", Name = "GetWorld")]
+        [ProducesResponseType(200)]
         public RunningWorldInfo Get(int id)
         {
             return new RunningWorldInfo(_runningWorlds[id]);
         }
 
         [HttpGet(Name = "GetWorlds")]
+        [ProducesResponseType(200)]
         public List<AvailableWorld> GetWorlds()
         {
             return _runningWorlds.GetAvailableWorlds();
         }
 
         [HttpGet("{worldId}/resources", Name = "GetResources")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public ActionResult<List<WorldResource>> GetMap(int worldId)
         {
             if (User.Identity?.Name == null)
@@ -62,6 +66,8 @@ namespace Multiverse.Server.Controllers
         }
 
         [HttpGet("{worldId}/map/{centerX}x{centerY}", Name = "GetMap")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public ActionResult<Map> GetMap(int worldId, int centerX, int centerY)
         {
             if (User.Identity?.Name == null)

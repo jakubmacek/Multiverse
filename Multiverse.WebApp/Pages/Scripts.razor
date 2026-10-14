@@ -1,0 +1,64 @@
+﻿@page "/scripts"
+@inject ApiClient ApiClient
+@inject IAccountService AccountService
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+
+<h1>Scripts</h1>
+
+@if (scripts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var script in scripts)
+            {
+                <tr>
+                    <td>@script.Id</td>
+                    <td>@script.Name</td>
+                    <td>@script.Type</td>
+                <td><button type="button" class="btn btn-sm btn-primary" @onclick="ev => EditScript(script)">Edit</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private ICollection<PlayerScript>? scripts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AccountService.Player == null || AccountService.SelectedWorld == null)
+        {
+            NavigationManager.NavigateTo("/worlds");
+            return;
+        }
+        
+        try
+        {
+            scripts = await ApiClient.GetScriptsAsync(AccountService.SelectedWorld.Id);
+        }
+        catch (Exception ex)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Error: " + ex.Message);
+        }
+    }
+
+    private void EditScript(PlayerScript script)
+    {
+        NavigationManager.NavigateTo("/script/" + script.Id);
+    }
+
+}

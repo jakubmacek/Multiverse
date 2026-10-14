@@ -16,7 +16,7 @@ namespace Multiverse.WebApp.Services
 
         public static ValueTask ConsoleLog(this IJSRuntime runtime, object? obj)
         {
-            return runtime.InvokeVoidAsync("console.log", obj);
+            return runtime.InvokeVoidAsync("console.log", obj ?? new object {});
         }
     }
 }

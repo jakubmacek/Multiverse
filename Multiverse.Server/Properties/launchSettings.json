@@ -14,7 +14,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Multiverse:AllowedWorlds": "1,2",
+        "Multiverse:Universes": "X:\\Dropbox\\Projects\\Multiverse\\Multiverse.SimpleUniverse\\bin\\Debug\\net5.0\\Multiverse.SimpleUniverse.dll"
       }
     },
     "Multiverse.Server": {

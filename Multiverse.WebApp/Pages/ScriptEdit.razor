@@ -1,0 +1,95 @@
+﻿@page "/script/{id:guid}"
+@using System.Xml.Linq
+@inject ApiClient ApiClient
+@inject IAccountService AccountService
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+
+@if (script == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <h1>Scripts: @script.Name</h1>
+
+    <form>
+        <div class="form-group">
+            <label for="id">Id</label>
+            <input type="text" class="form-control" id="id" disabled value="@script.Id">
+        </div>
+        <div class="form-group">
+            <label for="type">Type</label>
+            <input type="text" class="form-control" id="type" disabled value="@script.Type">
+        </div>
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" @bind="Name">
+        </div>
+        <div class="form-group">
+            <label for="source">Source</label>
+            <textarea class="form-control" id="source" rows="50" @bind="Source"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" @onclick="ev => Save()">
+            @if (Saving)
+            {
+                <i class="fa fa-refresh"></i>
+            }
+            Save
+        </button>
+    </form>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private PlayerScript? script;
+
+    public string Name { get; set; } = string.Empty;
+
+    public string Source { get; set; } = string.Empty;
+
+    private bool Saving { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AccountService.Player == null || AccountService.SelectedWorld == null)
+        {
+            NavigationManager.NavigateTo("/worlds");
+            return;
+        }
+
+        try
+        {
+            script = await ApiClient.GetScriptAsync(AccountService.SelectedWorld.Id, Id);
+            Name = script.Name;
+            Source = script.Source;
+        }
+        catch (Exception ex)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Error: " + ex.Message);
+        }
+    }
+
+    private async Task Save()
+    {
+        if (AccountService.Player == null || AccountService.SelectedWorld == null || script == null)
+            return;
+
+        try
+        {
+            Saving = true;
+            await ApiClient.UpdateScriptAsync(AccountService.SelectedWorld.Id, Id, Name, Source);
+        }
+        catch (Exception ex)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Error: " + ex.Message);
+        }
+        Saving = false;
+    }
+}

@@ -19,6 +19,9 @@ Currently, there is a single, very simple, universe programmed. If you want a si
 
 ## TO-DO general
 
+* Try https://github.com/Microsoft/ClearScript
+* Try PowerShell scripting https://www.codeproject.com/Articles/18229/How-to-run-PowerShell-scripts-from-C
+* Try Haxe scripting https://haxe.org/manual/target-cs-getting-started.html
 * Implement the PostgreSQL storage and prepare the initial and resetting SQL migrations.
 * Implement the Web application:
   * Simulation - regular ticks for all running worlds.

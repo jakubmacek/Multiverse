@@ -115,7 +115,7 @@ namespace Multiverse.Server.Controllers
                         new Claim("userName", user.Name, ClaimValueTypes.String),
                         new Claim("playerId", userPlayer.PlayerId.ToString(), ClaimValueTypes.Integer),
                     }),
-                    Expires = DateTime.UtcNow.AddHours(1),
+                    Expires = DateTime.UtcNow.AddHours(1).AddYears(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
                 if (user.Role != null)
